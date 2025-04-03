@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String           @id @default(uuid())
+  email              String           @unique
+  password           String
+  firstName          String
+  lastName           String
+  phoneNumber        String?          @unique
+  profilePicture     String?
+  bio                String?
+  website            String?
+  role               Role             @default(MEMBER)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  deletedAt          DateTime?
+  resetToken         String?
+  resetTokenExpiry   DateTime?
+  verified           Boolean          @default(false)
+  verificationToken  String?
+  announcements      Announcement[]
+  approvalsGiven     ApprovalStatus[] @relation("ApprovalsGivenBy")
+  auditLogs          AuditLog[]
+  comments           Comment[]
+  feedbacksGiven     Feedback[]       @relation("FeedbackGivenBy")
+  notifications      Notification[]
+  tasksAssigned      Task[]           @relation("AssignedTasks")
+  supervisedProjects Project[]        @relation("ProjectEncadrants")
+  juryProjects       Project[]        @relation("ProjectJury")
+  memberProjects     Project[]        @relation("ProjectMembers")
+  ownedProjects      Project[]        @relation("ProjectOwners")
+  reviewedProjects   Project[]        @relation("ProjectScientificReviewers")
+  jurySoutenances    Soutenance[]     @relation("SoutenanceJuryMembers")
+  soutenances        Soutenance[]     @relation("UserSoutenances")
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Project {
+  id                   String           @id @default(uuid())
+  name                 String
+  industry             String
+  about                String
+  problem              String
+  solution             String
+  idea                 String
+  targetAudience       String
+  competitiveAdvantage String
+  motivation           String
+  status               ProjectStatus    @default(PENDING)
+  stage                ProjectStage     @default(IDEA)
+  createdAt            DateTime         @default(now())
+  approvals            ApprovalStatus[]
+  auditLogs            AuditLog[]
+  comments             Comment[]
+  feedbacks            Feedback[]
+  files                File[]
+  milestones           Milestone[]
+  notifications        Notification[]
+  soutenance           Soutenance?      @relation("ProjectSoutenance")
+  tasks                Task[]
+  encadrants           User[]           @relation("ProjectEncadrants")
+  juryMembers          User[]           @relation("ProjectJury")
+  members              User[]           @relation("ProjectMembers")
+  owners               User[]           @relation("ProjectOwners")
+  scientificReviewers  User[]           @relation("ProjectScientificReviewers")
+}
+
+model Milestone {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  status      MilestoneStatus @default(NOT_STARTED)
+  dueDate     DateTime?
+  projectId   String
+  createdAt   DateTime        @default(now())
+  feedbacks   Feedback[]
+  project     Project         @relation(fields: [projectId], references: [id])
+}
+
+model Feedback {
+  id          String     @id @default(uuid())
+  content     String
+  rating      Int?
+  projectId   String
+  milestoneId String?
+  givenById   String
+  createdAt   DateTime   @default(now())
+  givenBy     User       @relation("FeedbackGivenBy", fields: [givenById], references: [id])
+  milestone   Milestone? @relation(fields: [milestoneId], references: [id])
+  project     Project    @relation(fields: [projectId], references: [id])
+}
+
+model ApprovalStatus {
+  id           String        @id @default(uuid())
+  projectId    String
+  approvedById String?
+  status       ProjectStatus
+  comments     String?
+  createdAt    DateTime      @default(now())
+  token        String?       // Add this field to store unique tokens
+  approvedBy   User?         @relation("ApprovalsGivenBy", fields: [approvedById], references: [id])
+  project      Project       @relation(fields: [projectId], references: [id])
+}
+
+
+model Soutenance {
+  id          String   @id @default(uuid())
+  projectId   String   @unique
+  scheduledAt DateTime
+  decision    String?
+  comments    String?
+  createdAt   DateTime @default(now())
+  project     Project  @relation("ProjectSoutenance", fields: [projectId], references: [id])
+  juryMembers User[]   @relation("SoutenanceJuryMembers")
+  users       User[]   @relation("UserSoutenances")
+}
+
+model Notification {
+  id               String           @id @default(uuid())
+  message          String
+  notificationType NotificationType
+  userId           String
+  projectId        String?
+  isRead           Boolean          @default(false)
+  response         String?
+  createdAt        DateTime         @default(now())
+  project          Project?         @relation(fields: [projectId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
+}
+
+model File {
+  id        String   @id @default(uuid())
+  filename  String
+  mimetype  String
+  url       String
+  projectId String
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id])
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  status       TaskStatus @default(PENDING)
+  dueDate      DateTime?
+  projectId    String
+  assignedToId String?
+  createdAt    DateTime   @default(now())
+  comments     Comment[]
+  assignedTo   User?      @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  project      Project    @relation(fields: [projectId], references: [id])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String
+  projectId String?
+  taskId    String?
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
+  task      Task?    @relation(fields: [taskId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  projectId String?
+  createdAt DateTime @default(now())
+  project   Project? @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  STAGE_SERVICE
+  PROJECT_OWNER
+  COMMITTEE_MEMBER
+  JURY_MEMBER
+  SUPERVISOR
+  MEMBER
+  LEADER
+}
+
+enum ProjectStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProjectStage {
+  IDEA
+  PROTOTYPE
+  LAUNCHED
+  SCALING
+}
+
+enum NotificationType {
+  INVITATION
+  APPROVAL_REQUEST
+  GENERAL
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
