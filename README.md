@@ -98,10 +98,132 @@ This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It inclu
 
 ### Authentication
 
-- `POST /auth/signup` - Register a new user
-- `POST /auth/signin` - Log in and receive a JWT token
-- `POST /auth/verify-email` - Verify email using a token
-- `POST /auth/forgot-password` - Request password reset
+## 📌 POST /auth/signup – Register a new user
+
+Registers a new user. Optional fields should be placed at the bottom of the request body.
+
+### ✅ Request Body
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "MEMBER",
+  "phoneNumber": "+1234567890",
+  "profilePicture": "https://example.com/profile.jpg",
+  "bio": "Passionate about startups.",
+  "website": "https://johndoe.dev"
+}
+```
+
+### 🟢 Success Response
+
+```json
+{
+  "message": "User created successfully. Please verify your email with the code sent to you."
+}
+```
+
+---
+
+## 📌 POST /auth/signin – Log in and receive a JWT token
+
+### ✅ Request Body
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+```
+
+### 🟢 Success Response
+
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "3ed888e2-f463-421a-b28d-4ef5c9245aa2",
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "MEMBER"
+  }
+}
+```
+
+### ❌ Error Responses
+
+#### Invalid credentials
+
+```json
+{
+  "message": "Invalid credentials",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+#### Email not verified
+
+```json
+{
+  "message": "Your email is not verified. Please verify your email first.",
+  "error": "Forbidden",
+  "statusCode": 403
+}
+```
+
+---
+
+## 📌 POST /auth/verify-email – Verify email using a token
+
+### ✅ Request Body
+
+```json
+{
+  "token": "678820"
+}
+```
+
+### 🟢 Success Response
+
+```json
+{
+  "message": "Email verified successfully!"
+}
+```
+
+---
+
+## 📌 POST /auth/forgot-password – Request password reset
+
+### ✅ Request Body
+
+```json
+{
+  "email": "john.doe@example.com"
+}
+```
+
+---
+
+## 📌 POST /auth/reset-password – Reset password using a token
+
+### ✅ Request Body
+
+```json
+{
+  "token": "reset-token-from-email",
+  "newPassword": "newSecurePassword456"
+}
+```
+
+---
+
 
 ### Users
 
