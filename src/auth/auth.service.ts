@@ -56,33 +56,34 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
   
     // ✅ Generate secure verification token
-    const verificationToken = uuidv4();
-  
     try {
-      // ✅ Create user in DB
+      // ✅ Generate 6-digit verification token
+      const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+    
       const user = await this.prisma.user.create({
         data: {
           email,
           password: hashedPassword,
           firstName,
           lastName,
-          phoneNumber,       // ✅ Added optional fields
-          profilePicture,    // ✅
-          bio,               // ✅
-          website,           // ✅
+          phoneNumber,
+          profilePicture,
+          bio,
+          website,
           role,
           verified: false,
           verificationToken,
         },
       });
-  
-      // ✅ Send verification email
+    
+      // ✅ Send email with 6-digit code
       await this.sendVerificationEmail(user.email, verificationToken);
-  
-      return { message: 'User created successfully. Please verify your email.' };
+    
+      return { message: 'User created successfully. Please verify your email with the code sent to you.' };
     } catch (error) {
       throw new BadRequestException('Error creating user. Please try again.');
     }
+    
   }
   
 
@@ -197,85 +198,33 @@ export class AuthService {
     }
   }
 
-  async sendVerificationEmail(email: string, token: string) {
+  async sendVerificationEmail(email: string, code: string) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: this.configService.get<string>('EMAIL_USER'), // Use env variable for email user
-        pass: this.configService.get<string>('EMAIL_PASS'), // Use env variable for email password
+        user: this.configService.get<string>('EMAIL_USER'),
+        pass: this.configService.get<string>('EMAIL_PASS'),
       },
     });
+  
     const mailOptions = {
       from: `"ProjectHub" <${this.configService.get<string>('EMAIL_USER')}>`,
       to: email,
-      subject: 'Verify Your Email',
+      subject: 'Verify Your Email - ProjectHub',
       html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              width: 100%;
-              max-width: 600px;
-              margin: 20px auto;
-              background: #ffffff;
-              padding: 20px;
-              border-radius: 10px;
-              box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-              text-align: center;
-            }
-            h2 {
-              color: #333;
-            }
-            p {
-              color: #555;
-              font-size: 16px;
-            }
-            .button {
-              display: inline-block;
-              padding: 12px 24px;
-              margin-top: 20px;
-              font-size: 16px;
-              color: #ffffff;
-              background: #007bff;
-              text-decoration: none;
-              border-radius: 5px;
-              font-weight: bold;
-            }
-            .button:hover {
-              background: #0056b3;
-            }
-            .footer {
-              margin-top: 20px;
-              font-size: 12px;
-              color: #777;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h2>Welcome to ProjectHub 🎉</h2>
-            <p>We're excited to have you on board! Please verify your email address to start using our platform.</p>
-            <a href="http://yourfrontend.com/verify-email?token=${token}" class="button">
-              Verify Your Email
-            </a>
-            <p>If you didn't create an account, you can ignore this email.</p>
-            <p class="footer">© 2024 ProjectHub. All rights reserved.</p>
-          </div>
-        </body>
-        </html>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+          <h2 style="color: #333;">Welcome to ProjectHub 🎉</h2>
+          <p>Please use the following verification code to activate your account:</p>
+          <div style="font-size: 32px; font-weight: bold; color: #007bff; margin: 20px 0;">${code}</div>
+          <p>If you didn't sign up, you can safely ignore this email.</p>
+          <p style="font-size: 12px; color: #aaa; text-align: center;">© ${new Date().getFullYear()} ProjectHub. All rights reserved.</p>
+        </div>
       `,
     };
-    
-
+  
     await transporter.sendMail(mailOptions);
   }
+  
 
   async resetPassword(dto: ResetPasswordDto) {
     const { token, newPassword } = dto;
@@ -302,15 +251,15 @@ export class AuthService {
     return { message: 'Password reset successfully' };
   }
 
-  async verifyEmail(token: string) {
+  async verifyEmail(code: string) {
     const user = await this.prisma.user.findFirst({
-      where: { verificationToken: token },
+      where: { verificationToken: code },
     });
-
+  
     if (!user) {
-      throw new BadRequestException('Invalid or expired verification token');
+      throw new BadRequestException('Invalid or expired verification code');
     }
-
+  
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -318,7 +267,8 @@ export class AuthService {
         verificationToken: null,
       },
     });
-
+  
     return { message: 'Email verified successfully!' };
   }
+  
 }

@@ -9,6 +9,7 @@ import { IsVerifiedGuard } from '../guards/is-verified/is-verified.guard'; // �
 import { RequestWithUser } from 'src/types/request-with-user.type';
 import { Role } from 'src/types/roles.enum';
 import { Roles } from '../decorators/roles/roles.decorator';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 @Controller('auth')
 
 export class AuthController {
@@ -41,10 +42,9 @@ export class AuthController {
 
   // ❌ No Guards → Users verify their email freely
   @Post('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    return this.authService.verifyEmail(token);
+  async verifyEmail(@Body() body: VerifyEmailDto) {
+    return this.authService.verifyEmail(body.token);
   }
-
   // ✅ Apply BOTH `AuthGuard` & `IsVerifiedGuard` ONLY to protected routes
   @Get('protected')
   @UseGuards(AuthGuard, IsVerifiedGuard)
