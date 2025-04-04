@@ -106,15 +106,15 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ```json
 {
-  "email": "john.doe@example.com",
-  "password": "securePassword123",
-  "firstName": "John",
-  "lastName": "Doe",
+  "email": "example.example@esi-sba.dz",
+  "password": "password123",
+  "firstName": "Mohammed",
+  "lastName": "Rabah",
   "role": "MEMBER",
-  "phoneNumber": "+1234567890",
-  "profilePicture": "https://example.com/profile.jpg",
-  "bio": "Passionate about startups.",
-  "website": "https://johndoe.dev"
+  "phoneNumber": "+213567890123",  // Optional, format: +[country code][phone number]
+  "profilePicture": "http://example.com/profile.jpg",  // Optional, URL format
+  "bio": "Software developer from Algeria, passionate about tech.",  // Optional
+  "website": "http://example.com",  // Optional, URL format
 }
 ```
 
@@ -134,9 +134,10 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ```json
 {
-  "email": "john.doe@example.com",
-  "password": "securePassword123"
+  "email": "example.example@esi-sba.dz",
+  "password": "password123"
 }
+
 ```
 
 ### 🟢 Success Response
@@ -144,15 +145,16 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 ```json
 {
   "message": "Login successful",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNlZDg4OGUyLWY0NjMtNDIxYS1iMjhkLTRlZjVjOTI0NWFhMiIsImVtYWlsIjoieGFtcGxlLmV4YW1wbGUuZXNpLXNiby5kemoiLCJpYXQiOjE3NDM3OTA0MDksImV4cCI6MTc0Mzc5NDAwOX0.nNimLWRX_G_Y5xQ8dfQcxWSoZhCXmD8lbdqEk_jkoKU",
   "user": {
     "id": "3ed888e2-f463-421a-b28d-4ef5c9245aa2",
-    "email": "john.doe@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
+    "email": "example.example@esi-sba.dz",
+    "firstName": "Mohammed",
+    "lastName": "Rabah",
     "role": "MEMBER"
   }
 }
+
 ```
 
 ### ❌ Error Responses
