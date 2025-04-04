@@ -111,6 +111,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
   "firstName": "Mohammed",
   "lastName": "Rabah",
   "role": "MEMBER",
+  //optional fields
   "phoneNumber": "+213567890123",  // Optional, format: +[country code][phone number]
   "profilePicture": "http://example.com/profile.jpg",  // Optional, URL format
   "bio": "Software developer from Algeria, passionate about tech.",  // Optional
