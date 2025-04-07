@@ -95,7 +95,7 @@ This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It inclu
 
 
 ## API Endpoints
-
+## Host : https://nestjs-projects-management.onrender.com
 ### Authentication
 
 ## 📌 POST /auth/signup – Register a new user
