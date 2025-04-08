@@ -17,11 +17,11 @@ export class ProjectService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
-
+  
     if (!user) {
       throw new ForbiddenException('User not found');
     }
-
+  
     // Step 2: Create the project
     const project = await this.prisma.project.create({
       data: {
@@ -48,15 +48,68 @@ export class ProjectService {
         },
       },
     });
-
+  
     // Step 3: Create approval statuses for member emails
     if (dto.memberEmails && dto.memberEmails.length > 0) {
-      await this.approvalStatusService.createApprovalStatuses(dto.memberEmails, project.id);
+      await this.approvalStatusService.generateApprovalRequests(
+        dto.memberEmails, 
+        project.id, 
+        'members' // Relation name for members
+      );
     }
-
+  
+    // Step 4: Create approval statuses for encadrant emails
+    if (dto.encadrantEmails && dto.encadrantEmails.length > 0) {
+      await this.approvalStatusService.generateApprovalRequests(
+        dto.encadrantEmails, 
+        project.id, 
+        'encadrants' // Relation name for encadrants
+      );
+    }
+  
     return project;
   }
-
+  //add user to project member encadrant...
+  async attachUserToProject(projectId: string, userIdentifier: string, relationType: string) {
+    // Find user by ID or email
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id: userIdentifier }, { email: userIdentifier }],
+      },
+    });
+  
+    if (!user) throw new Error("User not found");
+  
+    // Allowed relation field names from your Prisma model
+    const validRelations = [
+      "members",
+      "encadrants",
+      "juryMembers",
+      "owners",
+      "scientificReviewers",
+    ];
+  
+    if (!validRelations.includes(relationType)) {
+      throw new Error("Invalid relation type");
+    }
+  
+    // Dynamically connect user to the correct relation
+    return this.prisma.project.update({
+      where: { id: projectId },
+      data: {
+        [relationType]: {
+          connect: { id: user.id },
+        },
+      },
+      include: {
+        [relationType]: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
+    });
+  }
+  
+  
   async searchProjectByName(name: string) {
     console.log('Searching for:', name);
   
@@ -103,10 +156,33 @@ export class ProjectService {
       include: {
         owners: { select: { id: true, firstName: true, lastName: true, email: true } },
         members: { select: { id: true, firstName: true, lastName: true, email: true } },
+        encadrants: { select: { id: true, firstName: true, lastName: true, email: true } },
         
       },
     });
   }
+
+  async getProjectsWithoutEncadrants() {
+    return this.prisma.project.findMany({
+      where: {
+        encadrants: {
+          none: {}, // ⛔ means: no encadrants exist
+        },
+      },
+      include: {
+        owners: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        members: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        encadrants: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
+    });
+  }
+  
   
   async getProjectById(id: string) {
     return this.prisma.project.findUnique({

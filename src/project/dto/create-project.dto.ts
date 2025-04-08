@@ -45,5 +45,10 @@ export class CreateProjectDto {
   @IsArray()
   @IsString({ each: true }) // Ensure every element in the array is a string
   @IsOptional()
-  memberEmails?: string[]; // New field for member emails
+  memberEmails?: string[]; // Field for member emails
+
+  @IsArray()
+  @IsString({ each: true }) // Ensure every element in the array is a string
+  @IsOptional()
+  encadrantEmails?: string[]; // Field for encadrant emails
 }

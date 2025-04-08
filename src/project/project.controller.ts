@@ -18,6 +18,39 @@ export class ProjectController {
     return this.projectService.createProject(req.user.id, dto);
   }
 
+
+  //add member to a project 
+  // Example route handler for /add-user
+  @Post('/add-member')
+  addMember(@Body() body) {
+    const { projectId, userIdentifier } = body;
+    return this.projectService.attachUserToProject(projectId, userIdentifier, "members");
+  }
+  
+  @Post('/add-encadrant')
+  addEncadrant(@Body() body) {
+    const { projectId, userIdentifier } = body;
+    return this.projectService.attachUserToProject(projectId, userIdentifier, "encadrants");
+  }
+  
+  @Post('/add-jury')
+  addJury(@Body() body) {
+    const { projectId, userIdentifier } = body;
+    return this.projectService.attachUserToProject(projectId, userIdentifier, "juryMembers");
+  }
+  
+
+  //add encadrant to a prject (in case they didnt have encdarant yet )
+
+  // get projects that doest have encadranss 
+  @Get('noencadransts')
+  async getProjectsWithoutEncadrants() {
+    return this.projectService.getProjectsWithoutEncadrants();
+  }
+
+  // get projects that have only 2 members (field of more members needeed true )
+
+
   @Get('search/name/:name')
   async searchByName(@Param('name') name: string) {
     return this.projectService.searchProjectByName(name);
@@ -32,6 +65,7 @@ export class ProjectController {
   async getAllProjects() {
     return this.projectService.getAllProjects();
   }
+
 
   @Get(':id')
   async getProjectById(@Param('id') id: string) {
@@ -57,7 +91,7 @@ export class ProjectController {
 
   @UseGuards(AuthGuard, OwnershipGuard) // Only owners can manage team members
   @Post(':projectId/add-member/:userId')
-  async addMember(@Param('projectId') projectId: string, @Param('userId') userId: string) {
+  async addMembe(@Param('projectId') projectId: string, @Param('userId') userId: string) {
     return this.projectService.addMember(projectId, userId);
   }
 
