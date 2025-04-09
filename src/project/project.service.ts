@@ -4,7 +4,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectStatus, ProjectStage } from '@prisma/client';
 import { ApprovalStatusService } from '../approval-status/approval-status.service'; // Import ApprovalStatusService
 import { UpdateProjectDto } from './dto/update-project.dto';
-
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 @Injectable()
 export class ProjectService {
   constructor(
@@ -71,16 +71,16 @@ export class ProjectService {
   }
   //add user to project member encadrant...
   async attachUserToProject(projectId: string, userIdentifier: string, relationType: string) {
-    // Find user by ID or email
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ id: userIdentifier }, { email: userIdentifier }],
       },
     });
   
-    if (!user) throw new Error("User not found");
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
   
-    // Allowed relation field names from your Prisma model
     const validRelations = [
       "members",
       "encadrants",
@@ -90,10 +90,9 @@ export class ProjectService {
     ];
   
     if (!validRelations.includes(relationType)) {
-      throw new Error("Invalid relation type");
+      throw new BadRequestException("Invalid relation type");
     }
   
-    // Dynamically connect user to the correct relation
     return this.prisma.project.update({
       where: { id: projectId },
       data: {

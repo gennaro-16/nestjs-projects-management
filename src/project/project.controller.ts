@@ -7,6 +7,7 @@ import { OwnershipGuard } from 'src/guards/ownership/ownership.guard';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ProjectType, ProjectStatus, ProjectStage } from '../types/project.types';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Controller('projects')
 export class ProjectController {
@@ -21,6 +22,7 @@ export class ProjectController {
 
   //add member to a project 
   // Example route handler for /add-user
+  @UseGuards(AuthGuard, OwnershipGuard)
   @Post('/add-member')
   addMember(@Body() body) {
     const { projectId, userIdentifier } = body;

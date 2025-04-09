@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -8,30 +13,37 @@ export class OwnershipGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user; // Extract logged-in user from request
-    const projectId = request.params.id; // Extract project ID from request params
+    const user = request.user;
+
+    // Try to get projectId from params first, fallback to body
+    const projectId =
+      request.params.id || request.body.projectId || request.body.id;
 
     if (!user) {
       throw new ForbiddenException('You are not authenticated');
     }
 
-    // Fetch the project from the database
+    if (!projectId) {
+      throw new ForbiddenException('No project ID provided');
+    }
+
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
-      include: { owners: true }, // Fetch owners of the project
+      include: { owners: true },
     });
 
     if (!project) {
       throw new ForbiddenException('Project not found');
     }
 
-    // Check if the user is an owner of the project
-    const isOwner = project.owners.some(owner => owner.id === user.id);
+    const isOwner = project.owners.some((owner) => owner.id === user.id);
 
     if (!isOwner) {
-      throw new ForbiddenException('You are not authorized to modify this project');
+      throw new ForbiddenException(
+        'You are not authorized to modify this project',
+      );
     }
 
-    return true; // Grant access if the user is the owner
+    return true;
   }
 }
