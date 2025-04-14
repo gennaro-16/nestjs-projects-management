@@ -69,7 +69,7 @@ model Project {
   comments             Comment[]
   feedbacks            Feedback[]
   files                File[]
-  milestones           Milestone[]
+  milestones           Milestone[]      @relation("ProjectMilestones") // Added unique relation name
   notifications        Notification[]
   soutenance           Soutenance?      @relation("ProjectSoutenance")
   tasks                Task[]
@@ -81,28 +81,40 @@ model Project {
 }
 
 model Milestone {
-  id          String          @id @default(uuid())
+  id           String          @id @default(uuid())
+  name         String
+  description  String
+  status       MilestoneStatus @default(NOT_STARTED)
+  dueDate      DateTime?
+  projectId    String
+  createdAt    DateTime        @default(now())
+  project      Project         @relation("ProjectMilestones", fields: [projectId], references: [id])
+  feedbacks    Feedback[]
+  deliverables Deliverable[] // Relation to Deliverables
+  tasks        Task[]          @relation("TaskMilestones") // Ordered tasks
+}
+
+model Deliverable {
+  id          String    @id @default(uuid())
   name        String
   description String
-  status      MilestoneStatus @default(NOT_STARTED)
-  dueDate     DateTime?
-  projectId   String
-  createdAt   DateTime        @default(now())
-  feedbacks   Feedback[]
-  project     Project         @relation(fields: [projectId], references: [id])
+  milestoneId String
+  milestone   Milestone @relation(fields: [milestoneId], references: [id])
 }
 
 model Feedback {
-  id          String     @id @default(uuid())
+  id          String   @id @default(uuid())
   content     String
   rating      Int?
-  projectId   String
-  milestoneId String?
+  milestoneId String // Feedback must belong to a Milestone (required)
   givenById   String
-  createdAt   DateTime   @default(now())
-  givenBy     User       @relation("FeedbackGivenBy", fields: [givenById], references: [id])
-  milestone   Milestone? @relation(fields: [milestoneId], references: [id])
-  project     Project    @relation(fields: [projectId], references: [id])
+  createdAt   DateTime @default(now())
+
+  // Relations
+  givenBy   User      @relation("FeedbackGivenBy", fields: [givenById], references: [id])
+  milestone Milestone @relation(fields: [milestoneId], references: [id])
+  Project   Project?  @relation(fields: [projectId], references: [id])
+  projectId String?
 }
 
 model ApprovalStatus {
@@ -112,11 +124,29 @@ model ApprovalStatus {
   status       ProjectStatus
   comments     String?
   createdAt    DateTime      @default(now())
-  token        String?       // Add this field to store unique tokens
+  token        String? // Add this field to store unique tokens
   approvedBy   User?         @relation("ApprovalsGivenBy", fields: [approvedById], references: [id])
   project      Project       @relation(fields: [projectId], references: [id])
 }
 
+model Workshop {
+  id          String       @id @default(uuid()) // Unique identifier
+  title       String // Workshop title
+  description String // Workshop description
+  date        DateTime // Date of the workshop
+  time        String // Time of the workshop in string format
+  type        WorkshopType // Workshop type: on-site or online
+  location    String? // Physical location (optional if online)
+  onlineLink  String? // Online link (optional if on-site)
+
+  createdAt DateTime @default(now()) // Automatically tracks creation time
+  updatedAt DateTime @updatedAt // Automatically updates when modified
+}
+
+enum WorkshopType {
+  ON_SITE
+  ONLINE
+}
 
 model Soutenance {
   id          String   @id @default(uuid())
@@ -159,12 +189,17 @@ model Task {
   description  String?
   status       TaskStatus @default(PENDING)
   dueDate      DateTime?
-  projectId    String
+  milestoneId  String // Task now belongs to a Milestone
   assignedToId String?
+  order        Int // Field added to maintain task ordering within a milestone
   createdAt    DateTime   @default(now())
-  comments     Comment[]
-  assignedTo   User?      @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  project      Project    @relation(fields: [projectId], references: [id])
+
+  // Relations
+  comments   Comment[]
+  assignedTo User?     @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  milestone  Milestone @relation("TaskMilestones", fields: [milestoneId], references: [id])
+  Project    Project?  @relation(fields: [projectId], references: [id])
+  projectId  String?
 }
 
 model Comment {

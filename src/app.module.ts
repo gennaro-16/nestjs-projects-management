@@ -45,11 +45,20 @@ import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TrackingController } from './tracking/tracking.controller';
+import { TrackingService } from './tracking/tracking.service';
+import { TrackingModule } from './tracking/tracking.module';
+import { WorkshopService } from './workshop/workshop.service';
+import { DeliverableService } from './deliverable/deliverable.service';
+import { WorkshopController } from './workshop/workshop.controller';
+import { DeliverableController } from './deliverable/deliverable.controller';
+import { WorkshopModule } from './workshop/workshop.module';
+import { DeliverableModule } from './deliverable/deliverable.module';
 
 
 @Module({
-  imports: [AuthModule,ConfigModule, UserModule, AnnouncementModule, ApprovalStatusModule, AuditLogModule, CommentModule, FeedbackModule, FileModule, MilestoneModule, NotificationModule, SoutenanceModule, TaskModule, AdminModule, MailModule,],
-  controllers: [AppController, ProjectController, AnnouncementController, ApprovalStatusController, AuditLogController, CommentController, FeedbackController, FileController, MilestoneController, NotificationController, SoutenanceController, TaskController, AdminController],
-  providers: [AppService, PrismaService, ProjectService,JwtService, MailService,AuthGuard, AnnouncementService, ApprovalStatusService, AuditLogService, CommentService, FeedbackService, FileService, MilestoneService, NotificationService, SoutenanceService, TaskService, AdminService],
+  imports: [AuthModule,ConfigModule, UserModule, AnnouncementModule, ApprovalStatusModule, AuditLogModule, CommentModule, FeedbackModule, FileModule, MilestoneModule, NotificationModule, SoutenanceModule, TaskModule, AdminModule, MailModule, TrackingModule, WorkshopModule, DeliverableModule,],
+  controllers: [AppController, ProjectController, AnnouncementController, ApprovalStatusController, AuditLogController, CommentController, FeedbackController, FileController, MilestoneController, NotificationController, SoutenanceController, TaskController, AdminController, TrackingController, WorkshopController, DeliverableController],
+  providers: [AppService, PrismaService, ProjectService,JwtService, MailService,AuthGuard, AnnouncementService, ApprovalStatusService, AuditLogService, CommentService, FeedbackService, FileService, MilestoneService, NotificationService, SoutenanceService, TaskService, AdminService, TrackingService, WorkshopService, DeliverableService],
 })
 export class AppModule {}
