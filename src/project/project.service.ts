@@ -295,14 +295,55 @@ async getTopProjectsByMembers() {
   });
 }
 
+////members relatiosn stufs 
 
 
+  // General function to fetch project relations
+  async getProjectRelation(projectId: string, relationType: string) {
+    const validRelations = [
+      "members",
+      "encadrants",
+      "juryMembers",
+      "owners",
+      "scientificReviewers",
+      "modules", // Add other relations if needed
+    ];
+
+    // Check if the relation type is valid
+    if (!validRelations.includes(relationType)) {
+      throw new BadRequestException(`Invalid relation type: ${relationType}`);
+    }
+
+    // Dynamically query the relation
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+      include: {
+        [relationType]: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    // Handle case where project is not found
+    if (!project) {
+      throw new NotFoundException("Project not found");
+    }
+
+    // Return the requested relation data
+    return project[relationType];
+  
+
   
   
   
   
   
-  
+  }
 }
 
 /*// ✅ Filter by stage

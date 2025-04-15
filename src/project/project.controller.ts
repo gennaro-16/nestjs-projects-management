@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Patch, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Body,Query, UseGuards, Request, Get, Patch, Delete, Param } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
@@ -18,7 +18,17 @@ export class ProjectController {
   async createProject(@Request() req, @Body() dto: CreateProjectDto) {
     return this.projectService.createProject(req.user.id, dto);
   }
-
+//get all memebrs , encadrants ...../
+@Get(':projectId/relation')
+async getProjectRelation(
+  @Param('projectId') projectId: string,
+  @Query('relationType') relationType: string, // Pass the relation type as a query parameter
+) {
+  if (!relationType) {
+    throw new BadRequestException('Relation type is required');
+  }
+  return this.projectService.getProjectRelation(projectId, relationType);
+}
 
   //add member to a project 
   // Example route handler for /add-user

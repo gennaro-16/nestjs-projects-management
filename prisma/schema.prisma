@@ -26,12 +26,7 @@ model User {
   verified           Boolean          @default(false)
   verificationToken  String?
   announcements      Announcement[]
-  approvalsGiven     ApprovalStatus[] @relation("ApprovalsGivenBy")
-  auditLogs          AuditLog[]
-  comments           Comment[]
-  feedbacksGiven     Feedback[]       @relation("FeedbackGivenBy")
   notifications      Notification[]
-  tasksAssigned      Task[]           @relation("AssignedTasks")
   supervisedProjects Project[]        @relation("ProjectEncadrants")
   juryProjects       Project[]        @relation("ProjectJury")
   memberProjects     Project[]        @relation("ProjectMembers")
@@ -65,70 +60,26 @@ model Project {
   stage                ProjectStage     @default(IDEA)
   createdAt            DateTime         @default(now())
   approvals            ApprovalStatus[]
-  auditLogs            AuditLog[]
-  comments             Comment[]
-  feedbacks            Feedback[]
-  files                File[]
-  milestones           Milestone[]      @relation("ProjectMilestones") // Added unique relation name
   notifications        Notification[]
   soutenance           Soutenance?      @relation("ProjectSoutenance")
-  tasks                Task[]
   encadrants           User[]           @relation("ProjectEncadrants")
   juryMembers          User[]           @relation("ProjectJury")
   members              User[]           @relation("ProjectMembers")
   owners               User[]           @relation("ProjectOwners")
   scientificReviewers  User[]           @relation("ProjectScientificReviewers")
+  modules              Module[]
 }
 
-model Milestone {
-  id           String          @id @default(uuid())
-  name         String
-  description  String
-  status       MilestoneStatus @default(NOT_STARTED)
-  dueDate      DateTime?
-  projectId    String
-  createdAt    DateTime        @default(now())
-  project      Project         @relation("ProjectMilestones", fields: [projectId], references: [id])
-  feedbacks    Feedback[]
-  deliverables Deliverable[] // Relation to Deliverables
-  tasks        Task[]          @relation("TaskMilestones") // Ordered tasks
+model Module {
+  id               String   @id @default(uuid())
+  name             String   // Name of the module (like 'Mathematics', 'Science', etc.)
+  progressPercentage Float   // Progress percentage of the module
+  projectId        String   // Foreign key to link the module to a project
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  project          Project  @relation(fields: [projectId], references: [id])
 }
-
-model Deliverable {
-  id          String    @id @default(uuid())
-  name        String
-  description String
-  milestoneId String
-  milestone   Milestone @relation(fields: [milestoneId], references: [id])
-}
-
-model Feedback {
-  id          String   @id @default(uuid())
-  content     String
-  rating      Int?
-  milestoneId String // Feedback must belong to a Milestone (required)
-  givenById   String
-  createdAt   DateTime @default(now())
-
-  // Relations
-  givenBy   User      @relation("FeedbackGivenBy", fields: [givenById], references: [id])
-  milestone Milestone @relation(fields: [milestoneId], references: [id])
-  Project   Project?  @relation(fields: [projectId], references: [id])
-  projectId String?
-}
-
-model ApprovalStatus {
-  id           String        @id @default(uuid())
-  projectId    String
-  approvedById String?
-  status       ProjectStatus
-  comments     String?
-  createdAt    DateTime      @default(now())
-  token        String? // Add this field to store unique tokens
-  approvedBy   User?         @relation("ApprovalsGivenBy", fields: [approvedById], references: [id])
-  project      Project       @relation(fields: [projectId], references: [id])
-}
-
 model Workshop {
   id          String       @id @default(uuid()) // Unique identifier
   title       String // Workshop title
@@ -148,12 +99,22 @@ enum WorkshopType {
   ONLINE
 }
 
+
+model ApprovalStatus {
+  id           String        @id @default(uuid())
+  projectId    String
+  approvedById String?
+  status       ProjectStatus
+  createdAt    DateTime      @default(now())
+  token        String? 
+  project      Project       @relation(fields: [projectId], references: [id])
+}
+
 model Soutenance {
   id          String   @id @default(uuid())
   projectId   String   @unique
   scheduledAt DateTime
   decision    String?
-  comments    String?
   createdAt   DateTime @default(now())
   project     Project  @relation("ProjectSoutenance", fields: [projectId], references: [id])
   juryMembers User[]   @relation("SoutenanceJuryMembers")
@@ -171,57 +132,6 @@ model Notification {
   createdAt        DateTime         @default(now())
   project          Project?         @relation(fields: [projectId], references: [id])
   user             User             @relation(fields: [userId], references: [id])
-}
-
-model File {
-  id        String   @id @default(uuid())
-  filename  String
-  mimetype  String
-  url       String
-  projectId String
-  createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id])
-}
-
-model Task {
-  id           String     @id @default(uuid())
-  title        String
-  description  String?
-  status       TaskStatus @default(PENDING)
-  dueDate      DateTime?
-  milestoneId  String // Task now belongs to a Milestone
-  assignedToId String?
-  order        Int // Field added to maintain task ordering within a milestone
-  createdAt    DateTime   @default(now())
-
-  // Relations
-  comments   Comment[]
-  assignedTo User?     @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  milestone  Milestone @relation("TaskMilestones", fields: [milestoneId], references: [id])
-  Project    Project?  @relation(fields: [projectId], references: [id])
-  projectId  String?
-}
-
-model Comment {
-  id        String   @id @default(uuid())
-  content   String
-  authorId  String
-  projectId String?
-  taskId    String?
-  createdAt DateTime @default(now())
-  author    User     @relation(fields: [authorId], references: [id])
-  project   Project? @relation(fields: [projectId], references: [id])
-  task      Task?    @relation(fields: [taskId], references: [id])
-}
-
-model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String
-  action    String
-  projectId String?
-  createdAt DateTime @default(now())
-  project   Project? @relation(fields: [projectId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum Role {
@@ -252,17 +162,4 @@ enum NotificationType {
   INVITATION
   APPROVAL_REQUEST
   GENERAL
-}
-
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-enum MilestoneStatus {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETED
 }
