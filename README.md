@@ -25,72 +25,126 @@ This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It inclu
 ## Project Structure
 
 ```bash
+.
 ├── admin
+│   ├── admin.controller.spec.ts
 │   ├── admin.controller.ts
 │   ├── admin.module.ts
+│   ├── admin.service.spec.ts
 │   ├── admin.service.ts
 │   └── dto
 ├── announcement
+│   ├── announcement.controller.spec.ts
 │   ├── announcement.controller.ts
 │   ├── announcement.module.ts
+│   ├── announcement.service.spec.ts
 │   ├── announcement.service.ts
 │   └── dto
+├── app.controller.spec.ts
+├── app.controller.ts
 ├── app.module.ts
+├── app.service.ts
 ├── approval-status
+│   ├── approval-status.controller.spec.ts
 │   ├── approval-status.controller.ts
 │   ├── approval-status.module.ts
+│   ├── approval-status.service.spec.ts
 │   ├── approval-status.service.ts
 │   └── dto
-├── audit-log
-│   ├── audit-log.controller.ts
-│   ├── audit-log.module.ts
-│   ├── audit-log.service.ts
-│   └── dto
 ├── auth
+│   ├── auth.controller.spec.ts
 │   ├── auth.controller.ts
 │   ├── auth.module.ts
+│   ├── auth.service.spec.ts
 │   ├── auth.service.ts
 │   ├── dto
-│   ├── jwt.strategy.ts
+│   └── jwt.strategy.ts
 ├── config
 ├── decorators
-│   ├── roles.decorator.ts
-│   ├── user.decorator.ts
-├── feedback
-│   ├── feedback.controller.ts
-│   ├── feedback.module.ts
-│   ├── feedback.service.ts
-│   └── dto
-├── file
-│   ├── file.controller.ts
-│   ├── file.module.ts
-│   ├── file.service.ts
-│   └── dto
+│   ├── roles
+│   └── user.decorator.ts
 ├── filters
+│   ├── auth
+│   └── http-exception
 ├── guards
+│   ├── auth
+│   ├── is-verified
+│   ├── ownership
+│   └── roles
 ├── jwt
+│   ├── jwt.module.ts
+│   ├── jwt.service.spec.ts
+│   └── jwt.service.ts
 ├── mail
+│   ├── dto
+│   ├── mail.controller.spec.ts
+│   ├── mail.controller.ts
+│   ├── mail.module.ts
+│   ├── mail.service.spec.ts
+│   └── mail.service.ts
+├── main.ts
 ├── middleware
-├── milestone
+│   ├── auth
+│   └── logger
 ├── notification
+│   ├── dto
+│   ├── notification.controller.spec.ts
+│   ├── notification.controller.ts
+│   ├── notification.module.ts
+│   ├── notification.service.spec.ts
+│   └── notification.service.ts
 ├── pipes
+│   ├── auth
+│   └── parse-int
 ├── prisma
 │   ├── prisma.module.ts
-│   ├── prisma.service.ts
+│   ├── prisma.service.spec.ts
+│   └── prisma.service.ts
 ├── project
-│   ├── project.controller.ts
-│   ├── project.service.ts
 │   ├── dto
+│   ├── project.controller.spec.ts
+│   ├── project.controller.ts
+│   ├── project.service.spec.ts
+│   └── project.service.ts
 ├── soutenance
-├── task
+│   ├── dto
+│   ├── soutenance.controller.spec.ts
+│   ├── soutenance.controller.ts
+│   ├── soutenance.module.ts
+│   ├── soutenance.service.spec.ts
+│   └── soutenance.service.ts
 ├── types
+│   ├── ApprovalStatus.ts
+│   ├── AuditLog.ts
+│   ├── Comment.ts
+│   ├── Feedback.ts
+│   ├── File.ts
+│   ├── Milestone.type.ts
+│   ├── Notification.ts
+│   ├── Soutenance.ts
+│   ├── Task.ts
+│   ├── custom-prisma.types.ts
+│   ├── jwt-payload.type.ts
+│   ├── project.types.ts
+│   ├── request-with-user.type.ts
+│   ├── roles.enum.ts
+│   └── user.type.ts
 ├── user
+│   ├── dto
+│   ├── user.controller.spec.ts
 │   ├── user.controller.ts
 │   ├── user.module.ts
-│   ├── user.service.ts
-│   ├── dto
-└── utils
-    └── verification.ts
+│   ├── user.service.spec.ts
+│   └── user.service.ts
+├── utils
+│   └── verfication.ts
+└── workshop
+    ├── workshop.controller.spec.ts
+    ├── workshop.controller.ts
+    ├── workshop.module.ts
+    ├── workshop.service.spec.ts
+    └── workshop.service.ts
+
 ```
 
 
