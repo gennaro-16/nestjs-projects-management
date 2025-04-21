@@ -290,11 +290,160 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ### Projects
 
-- `POST /projects` - Create a new project
-- `GET /projects` - Get all projects
-- `GET /projects/:id` - Get project by ID
-- `PATCH /projects/:id` - Update project details
-- `DELETE /projects/:id` - Delete a project
+## 📌 `POST /projects` – Create a new project
+Registers a new project. Optional fields should be placed at the bottom of the request body.
+
+### ✅ Request Body
+```json
+{
+  "name": "My Awesome Project",
+  "description": "A detailed project description",
+  "industry": "Tech",
+  "startDate": "2025-05-01",
+  "endDate": "2025-12-31",
+  // Optional fields
+  "tags": ["AI", "Innovation"],
+  "budget": 50000
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "id": "abc123",
+  "name": "My Awesome Project",
+  "description": "A detailed project description",
+  "industry": "Tech",
+  "startDate": "2025-05-01",
+  "endDate": "2025-12-31",
+  "ownerId": "user123",
+  "members": [],
+  "encadrants": [],
+  "juryMembers": [],
+  "tags": ["AI", "Innovation"],
+  "budget": 50000
+}
+```
+
+---
+
+## 📌 `GET /projects/:projectId/relation` – Get project relation
+Fetches relation data for a specific project.
+
+### ✅ Request Query Parameters
+```json
+{
+  "relationType": "members" // Can be "members", "encadrants", or "juryMembers"
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "projectId": "abc123",
+  "relationType": "members",
+  "relationData": [
+    {
+      "userId": "user456",
+      "name": "John Doe",
+      "role": "MEMBER"
+    },
+    {
+      "userId": "user789",
+      "name": "Jane Smith",
+      "role": "MEMBER"
+    }
+  ]
+}
+```
+
+---
+
+## 📌 `POST /projects/add-member` – Add a member to a project
+Adds a member to a specified project.
+
+### ✅ Request Body
+```json
+{
+  "projectId": "abc123",
+  "userIdentifier": "user456" // Can be user ID or email
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "success": true,
+  "message": "Member added successfully",
+  "updatedProject": {
+    "id": "abc123",
+    "name": "My Awesome Project",
+    "members": [
+      {
+        "userId": "user456",
+        "name": "John Doe"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## 📌 `GET /projects/noencadransts` – Get projects without encadrants
+Fetches a list of projects with no encadrants assigned.
+
+### ✅ Request Body
+No body is required.
+
+### 🟢 Success Response
+```json
+{
+  "projects": [
+    {
+      "id": "project001",
+      "name": "Project Alpha",
+      "membersCount": 3
+    },
+    {
+      "id": "project002",
+      "name": "Project Beta",
+      "membersCount": 2
+    }
+  ]
+}
+```
+
+---
+
+## 📌 `PATCH /projects/:id` – Update a project
+Updates a specific project’s details.
+
+### ✅ Request Body
+```json
+{
+  "name": "Updated Project Name",
+  "description": "Updated description",
+  "startDate": "2025-06-01",
+  "endDate": "2025-12-01"
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "success": true,
+  "updatedProject": {
+    "id": "abc123",
+    "name": "Updated Project Name",
+    "description": "Updated description",
+    "startDate": "2025-06-01",
+    "endDate": "2025-12-01"
+  }
+}
+```
+
+
 
 ### Approval System (In Progress)
 
