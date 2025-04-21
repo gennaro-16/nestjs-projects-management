@@ -280,6 +280,166 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 ```
 
 ---
+# Project API Documentation
+
+This document outlines the available routes for managing projects, members, and associated data within the system.
+
+## Routes
+
+### 1. **Create a Project**
+- **Method:** `POST`
+- **Route:** `/projects`
+- **Description:** Create a new project. Only authenticated users can create a project.
+- **Guards:** `AuthGuard`
+- **Request Body:** 
+  - `CreateProjectDto`
+
+### 2. **Get Project Relations**
+- **Method:** `GET`
+- **Route:** `/projects/:projectId/relation`
+- **Description:** Get the relations for a project (e.g., members, encadrants).
+- **Query Parameters:** 
+  - `relationType` (string) - Type of relation (e.g., members, encadrants, jury).
+- **Request Parameters:** 
+  - `projectId` (string) - The ID of the project.
+
+### 3. **Add Member to a Project**
+- **Method:** `POST`
+- **Route:** `/projects/add-member`
+- **Description:** Add a member to a project.
+- **Guards:** `AuthGuard`, `OwnershipGuard`
+- **Request Body:** 
+  - `projectId` (string)
+  - `userIdentifier` (string)
+
+### 4. **Add Encadrant to a Project**
+- **Method:** `POST`
+- **Route:** `/projects/add-encadrant`
+- **Description:** Add an encadrant to a project.
+- **Request Body:** 
+  - `projectId` (string)
+  - `userIdentifier` (string)
+
+### 5. **Add Jury Member to a Project**
+- **Method:** `POST`
+- **Route:** `/projects/add-jury`
+- **Description:** Add a jury member to a project.
+- **Request Body:** 
+  - `projectId` (string)
+  - `userIdentifier` (string)
+
+### 6. **Get Projects Without Encadrants**
+- **Method:** `GET`
+- **Route:** `/projects/noencadrants`
+- **Description:** Get all projects that don't have any encadrants.
+
+### 7. **Search Projects by Name**
+- **Method:** `GET`
+- **Route:** `/projects/search/name/:name`
+- **Description:** Search for projects by name.
+- **Request Parameters:** 
+  - `name` (string)
+
+### 8. **Search Projects by Owner**
+- **Method:** `GET`
+- **Route:** `/projects/search/owner/:ownerName`
+- **Description:** Search for projects by owner's name.
+- **Request Parameters:** 
+  - `ownerName` (string)
+
+### 9. **Get All Projects**
+- **Method:** `GET`
+- **Route:** `/projects`
+- **Description:** Get a list of all projects.
+
+### 10. **Get Project by ID**
+- **Method:** `GET`
+- **Route:** `/projects/:id`
+- **Description:** Get a specific project by its ID.
+- **Request Parameters:** 
+  - `id` (string)
+
+### 11. **Update a Project**
+- **Method:** `PATCH`
+- **Route:** `/projects/:id`
+- **Description:** Update a project. Only authenticated project owners can update a project.
+- **Guards:** `AuthGuard`, `OwnershipGuard`
+- **Request Parameters:** 
+  - `id` (string)
+- **Request Body:** 
+  - `UpdateProjectDto`
+
+### 12. **Delete a Project**
+- **Method:** `DELETE`
+- **Route:** `/projects/:id`
+- **Description:** Delete a project. Only authenticated project owners can delete a project.
+- **Guards:** `AuthGuard`, `OwnershipGuard`
+- **Request Parameters:** 
+  - `id` (string)
+
+### 13. **Search Projects by Industry**
+- **Method:** `GET`
+- **Route:** `/projects/search/industry/:industry`
+- **Description:** Search for projects by industry.
+- **Request Parameters:** 
+  - `industry` (string)
+
+### 14. **Add Member to a Project (Specific)**
+- **Method:** `POST`
+- **Route:** `/projects/:projectId/add-member/:userId`
+- **Description:** Add a specific user as a member of a project.
+- **Guards:** `AuthGuard`, `OwnershipGuard`
+- **Request Parameters:** 
+  - `projectId` (string)
+  - `userId` (string)
+
+### 15. **Remove Member from a Project**
+- **Method:** `POST`
+- **Route:** `/projects/:projectId/remove-member/:userId`
+- **Description:** Remove a specific user from a project.
+- **Guards:** `AuthGuard`, `OwnershipGuard`
+- **Request Parameters:** 
+  - `projectId` (string)
+  - `userId` (string)
+
+### 16. **Get Projects by Stage**
+- **Method:** `GET`
+- **Route:** `/projects/filter/stage/:stage`
+- **Description:** Get projects filtered by stage.
+- **Request Parameters:** 
+  - `stage` (string) - The project stage.
+
+### 17. **Get Projects by Status**
+- **Method:** `GET`
+- **Route:** `/projects/filter/status/:status`
+- **Description:** Get projects filtered by status.
+- **Request Parameters:** 
+  - `status` (string) - The project status.
+
+### 18. **Sort Projects by Date**
+- **Method:** `GET`
+- **Route:** `/projects/sort/date/:order`
+- **Description:** Get projects sorted by date.
+- **Request Parameters:** 
+  - `order` (asc | desc) - Sorting order.
+
+### 19. **Sort Projects by Members**
+- **Method:** `GET`
+- **Route:** `/projects/sort/members/:order`
+- **Description:** Get projects sorted by the number of members.
+- **Request Parameters:** 
+  - `order` (asc | desc) - Sorting order.
+
+### 20. **Get Top Industries**
+- **Method:** `GET`
+- **Route:** `/projects/stats/top-industries`
+- **Description:** Get the top industries based on projects.
+
+### 21. **Get Top Projects by Members**
+- **Method:** `GET`
+- **Route:** `/projects/stats/top-projects`
+- **Description:** Get the top projects based on the number of members.
+
 
 
 ### Users
