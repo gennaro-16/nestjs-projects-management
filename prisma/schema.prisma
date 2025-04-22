@@ -7,16 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Year {
+  _1cp
+  _2csp
+  _1cs
+  _2cs
+  _3cs
+}
+
+
+
 model User {
   id                 String           @id @default(uuid())
   email              String           @unique
   password           String
   firstName          String
   lastName           String
+  year               Year? 
   phoneNumber        String?          @unique
   profilePicture     String?
   bio                String?
   website            String?
+  
   role               Role             @default(MEMBER)
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
@@ -140,7 +152,7 @@ model Notification {
 enum Role {
   ADMIN
   STAGE_SERVICE
-  PROJECT_OWNER
+  PROJECT_LEADER
   COMMITTEE_MEMBER
   JURY_MEMBER
   SUPERVISOR
