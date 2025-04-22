@@ -29,11 +29,12 @@ import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ModuleModule } from './module/module.module';
 
 
 
 @Module({
-  imports: [AuthModule,ConfigModule, UserModule, AnnouncementModule, ApprovalStatusModule, NotificationModule, SoutenanceModule,  AdminModule, MailModule],
+  imports: [AuthModule,ConfigModule, UserModule, AnnouncementModule, ApprovalStatusModule, NotificationModule, SoutenanceModule,  AdminModule, MailModule, ModuleModule],
   controllers: [AppController, ProjectController, AnnouncementController, ApprovalStatusController,  NotificationController, SoutenanceController, AdminController],
   providers: [AppService, PrismaService, ProjectService,JwtService, MailService,AuthGuard, AnnouncementService, ApprovalStatusService, NotificationService, SoutenanceService, AdminService],
 })

@@ -89,7 +89,7 @@ model Workshop {
   type        WorkshopType // Workshop type: on-site or online
   location    String? // Physical location (optional if online)
   onlineLink  String? // Online link (optional if on-site)
-
+  mentor       String // mentor full name
   createdAt DateTime @default(now()) // Automatically tracks creation time
   updatedAt DateTime @updatedAt // Automatically updates when modified
 }
@@ -120,6 +120,9 @@ model Soutenance {
   juryMembers User[]   @relation("SoutenanceJuryMembers")
   users       User[]   @relation("UserSoutenances")
 }
+
+
+
 
 model Notification {
   id               String           @id @default(uuid())

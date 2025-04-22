@@ -33,6 +33,7 @@
     "class-validator": "^0.14.1",
     "data-fns": "^1.1.0",
     "date-fns": "^4.1.0",
+    "mapped-types": "^0.0.1",
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
