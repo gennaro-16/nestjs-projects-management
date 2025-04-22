@@ -23,10 +23,11 @@ yaml
   "description": "Covers frontend and backend technologies",
   "year": "1cs"
 }
+```
 (Structure should match your CreateModuleDto)
 
 Response
-json
+```json
 
 {
   "id": "uuid",
@@ -34,11 +35,12 @@ json
   "description": "Covers frontend and backend technologies",
   "year": "1cs"
 }
+```
 🔹 GET /modules
 Retrieve all modules
 
 Response
-json
+```json
 
 [
   {
@@ -48,6 +50,7 @@ json
   },
   ...
 ]
+```
 🔹 GET /modules/:id
 Get a specific module by ID
 
@@ -55,7 +58,7 @@ Params
 id: string (UUID or database ID)
 
 Response
-json
+```json
 
 {
   "id": "uuid",
@@ -63,6 +66,7 @@ json
   "description": "Covers frontend and backend technologies",
   "year": "1cs"
 }
+```
 🔹 PUT /modules/:id
 Update an existing module
 
@@ -72,15 +76,16 @@ id: string
 Request Body
 (Same structure as UpdateModuleDto, e.g.)
 
-json
+```json
 
 {
   "name": "Advanced Web Dev",
   "description": "Includes DevOps and deployment",
   "year": "2cs"
 }
+```
 Response
-json
+```json
 
 {
   "id": "uuid",
@@ -88,6 +93,7 @@ json
   "description": "Includes DevOps and deployment",
   "year": "2cs"
 }
+```
 🔹 DELETE /modules/:id
 Delete a module by ID
 
@@ -95,8 +101,9 @@ Params
 id: string
 
 Response
-json
+```json
 
 {
   "message": "Module deleted successfully"
 }
+```
