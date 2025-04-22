@@ -27,11 +27,12 @@ yaml
   "date": "2025-05-10T10:00:00Z",
   "location": "Online"
 }
+```
+
 (Structure depends on CreateWorkshopDto)
 
 Response
-json
-
+```json
 {
   "id": "uuid",
   "title": "NestJS Bootcamp",
@@ -39,12 +40,13 @@ json
   "date": "2025-05-10T10:00:00Z",
   "location": "Online"
 }
+```
+
 🔹 GET /workshops
 Get all workshops
 
 Response
-json
-
+```json
 [
   {
     "id": "uuid",
@@ -53,6 +55,7 @@ json
   },
   ...
 ]
+```
 🔹 GET /workshops/:id
 Get a specific workshop by ID
 
@@ -60,7 +63,7 @@ Params
 id: string (UUID or database ID)
 
 Response
-json
+```json
 
 {
   "id": "uuid",
@@ -69,6 +72,8 @@ json
   "date": "2025-05-10T10:00:00Z",
   "location": "Online"
 }
+```
+
 🔹 PUT /workshops/:id
 Update an existing workshop
 
@@ -78,20 +83,22 @@ id: string
 Request Body
 (Same structure as UpdateWorkshopDto, e.g.)
 
-json
+```json
 
 {
   "title": "Updated Title",
   "location": "New Location"
 }
+```
 Response
-json
+```json
 
 {
   "id": "uuid",
   "title": "Updated Title",
   "location": "New Location"
 }
+```
 🔹 DELETE /workshops/:id
 Delete a workshop
 
@@ -99,16 +106,17 @@ Params
 id: string
 
 Response
-json
+```json
 
 {
   "message": "Workshop deleted successfully"
 }
+```
 🔹 GET /workshops/past
 Get all past workshops
 
 Response
-json
+```json
 
 [
   {
@@ -117,11 +125,12 @@ json
     "date": "2023-04-10T10:00:00Z"
   }
 ]
+```
 🔹 GET /workshops/upcoming
 Get all upcoming workshops
 
 Response
-json
+```json
 
 [
   {
@@ -130,3 +139,4 @@ json
     "date": "2025-05-10T10:00:00Z"
   }
 ]
+```
