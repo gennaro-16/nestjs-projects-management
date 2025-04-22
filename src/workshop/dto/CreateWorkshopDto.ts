@@ -8,6 +8,10 @@ export class CreateWorkshopDto {
   @IsString()
   description: string;
 
+  @IsString()
+  mentor: string;
+
+
   @IsDateString()
   date: string;
 

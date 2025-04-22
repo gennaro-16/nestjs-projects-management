@@ -8,11 +8,23 @@ export class WorkshopService {
   constructor(private prisma: PrismaService) {}
 
   // Create a new workshop
-  async create(data: CreateWorkshopDto): Promise<Workshop> {
-    return this.prisma.workshop.create({
-      data,
-    });
+  async create(data: CreateWorkshopDto): Promise<Workshop | { error: string }> {
+    try {
+      const existingWorkshop = await this.prisma.workshop.findUnique({
+        where: { title: data.title }, // Assuming 'title' is unique
+      });
+  
+      if (existingWorkshop) {
+        return { error: 'A workshop with this title already exists.' };
+      }
+  
+      const workshop = await this.prisma.workshop.create({ data });
+      return workshop;
+    } catch (error) {
+      return { error: 'An unexpected error occurred while creating the workshop.' };
+    }
   }
+  
 
   // Fetch all workshops
   async findAll(): Promise<Workshop[]> {
@@ -30,9 +42,10 @@ export class WorkshopService {
   async update(id: string, data: UpdateWorkshopDto): Promise<Workshop> {
     return this.prisma.workshop.update({
       where: { id },
-      data,
+      data, // Partial update: only updates provided fields
     });
   }
+  
 
   // Delete a workshop by ID
   async remove(id: string): Promise<Workshop> {
@@ -43,25 +56,27 @@ export class WorkshopService {
 
    // Get past workshops
    async findPast(): Promise<Workshop[]> {
-    const currentDate = new Date();
+    const currentDate = new Date().toISOString(); // ISO format for consistency
+    console.log('Current Date:', currentDate); // Debug currentDate
     return this.prisma.workshop.findMany({
       where: {
         date: {
-          lt: currentDate, // Less than current date
+          lt: currentDate,
         },
       },
     });
   }
-
-  // Get upcoming workshops
+  
   async findUpcoming(): Promise<Workshop[]> {
-    const currentDate = new Date();
+    const currentDate = new Date().toISOString(); // ISO format for consistency
+    console.log('Current Date:', currentDate); // Debug currentDate
     return this.prisma.workshop.findMany({
       where: {
         date: {
-          gt: currentDate, // Greater than current date
+          gt: currentDate,
         },
       },
     });
   }
+  
 }

@@ -82,7 +82,7 @@ model Module {
 }
 model Workshop {
   id          String       @id @default(uuid()) // Unique identifier
-  title       String // Workshop title
+  title       String @unique // Workshop title
   description String // Workshop description
   date        DateTime // Date of the workshop
   time        String // Time of the workshop in string format

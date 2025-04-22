@@ -10,7 +10,7 @@ export class UpdateWorkshopDto {
   @IsString()
   description?: string;
 
-
+  @IsOptional()
   @IsString()
   mentor: string;
 

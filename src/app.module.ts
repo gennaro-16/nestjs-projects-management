@@ -30,12 +30,15 @@ import { AdminModule } from './admin/admin.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ModuleModule } from './module/module.module';
-
+import { Workshop } from '@prisma/client';
+import { WorkshopModule } from './workshop/workshop.module';
+import { WorkshopController } from './workshop/workshop.controller';
+import { WorkshopService } from './workshop/workshop.service';
 
 
 @Module({
-  imports: [AuthModule,ConfigModule, UserModule, AnnouncementModule, ApprovalStatusModule, NotificationModule, SoutenanceModule,  AdminModule, MailModule, ModuleModule],
-  controllers: [AppController, ProjectController, AnnouncementController, ApprovalStatusController,  NotificationController, SoutenanceController, AdminController],
-  providers: [AppService, PrismaService, ProjectService,JwtService, MailService,AuthGuard, AnnouncementService, ApprovalStatusService, NotificationService, SoutenanceService, AdminService],
+  imports: [AuthModule,ConfigModule,WorkshopModule, UserModule, AnnouncementModule, ApprovalStatusModule, NotificationModule, SoutenanceModule,  AdminModule, MailModule, ModuleModule],
+  controllers: [AppController, ProjectController,WorkshopController, AnnouncementController, ApprovalStatusController,  NotificationController, SoutenanceController, AdminController],
+  providers: [AppService, PrismaService,WorkshopService, ProjectService,JwtService, MailService,AuthGuard, AnnouncementService, ApprovalStatusService, NotificationService, SoutenanceService, AdminService],
 })
 export class AppModule {}
