@@ -118,6 +118,7 @@ eroors
 - **Request Body:** 
   - `projectId` (string)
   - `userIdentifier` (string)
+  ```json
 {
     "id": "331daff9-26c1-4c74-b79f-a27b38832d2f",
     "name": "Projedddesssdddect X",
@@ -142,18 +143,23 @@ eroors
     ]
 }
 
+```
 
+```json
 {
   "projectId": "67bb0277-1804-4fdb-bb7b-e382fc79d913",
   "userIdentifier": "d413715a-2a41-42b8-b215-a55bfa3e4305"
 
 }
+```
+```json
 {
     "message": "You are not authorized to modify this project",
     "error": "Forbidden",
     "statusCode": 403
 }
 
+```
 
 ### 4. **Add Encadrant to a Project**
 - **Method:** `POST`
@@ -162,11 +168,14 @@ eroors
 - **Request Body:** 
   - `projectId` (string)
   - `userIdentifier` (string)
-{
+  ```json{
   "projectId": "331daff9-26c1-4c74-b79f-a27b38832d2f",
   "userIdentifier": "d413715a-2a41-42b8-b215-a55bfa3e4305"
  
 }
+
+```
+```json
 
 {
     "id": "331daff9-26c1-4c74-b79f-a27b38832d2f",
@@ -192,6 +201,7 @@ eroors
     ]
 }
 
+```
 ### 5. **Add Jury Member to a Project**
 - **Method:** `POST`
 - **Route:** `/projects/add-jury`
@@ -199,11 +209,13 @@ eroors
 - **Request Body:** 
   - `projectId` (string)
   - `userIdentifier` (string)
+  ```json
 {
   "projectId": "331daff9-26c1-4c74-b79f-a27b38832d2f",
   "userIdentifier": "d413715a-2a41-42b8-b215-a55bfa3e4305"
 
 }
+```json
 {
     "id": "331daff9-26c1-4c74-b79f-a27b38832d2f",
     "name": "Projedddesssdddect X",
@@ -228,6 +240,8 @@ eroors
     ]
 }
 
+```
+
 
 ### 6. **Get Projects Without Encadrants**
 - **Method:** `GET`
@@ -242,7 +256,8 @@ eroors
 - **Description:** Search for projects by name.
 - **Request Parameters:** 
   - `name` (string)
-[
+  
+```json
     {
         "id": "5d1734a7-58e0-48b5-8abd-f2489efc88c3",
         "name": "Project X",
@@ -311,7 +326,9 @@ eroors
                 "lastName": "Doe"
             }
         ]
-    },
+    }
+
+```
 
 ### 8. **Search Projects by Owner**
 - **Method:** `GET`
@@ -319,7 +336,8 @@ eroors
 - **Description:** Search for projects by owner's name.
 - **Request Parameters:** 
   - `ownerName` (string)
-[
+
+```json
     {
         "id": "331daff9-26c1-4c74-b79f-a27b38832d2f",
         "name": "Projedddesssdddect X",
@@ -435,12 +453,14 @@ eroors
             }
         ]
     }
-]
+
+```
 
 ### 9. **Get All Projects**
 - **Method:** `GET`
 - **Route:** `/projects`
 - **Description:** Get a list of all projects.
+```json
 
   {
         "id": "67bb0277-1804-4fdb-bb7b-e382fc79d913",
@@ -492,7 +512,9 @@ eroors
                 "email": "zr.nesal@esi-sba.dz"
             }
         ]
-    },
+    }
+
+```
 
 ### 10. **Get Project by ID**
 - **Method:** `GET`
