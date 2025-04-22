@@ -9,11 +9,24 @@ export class ModuleService {
   constructor(private prisma: PrismaService) {}
 
   // Create a new module
-  async create(data: CreateModuleDto): Promise<Module> {
+  async create(data: CreateModuleDto): Promise<Module | { error: string }> {
+    // 1. Check if the related project exists
+    const projectExists = await this.prisma.project.findUnique({
+      where: {
+        id: data.projectId, // assuming your DTO includes `projectId`
+      },
+    });
+  
+    if (!projectExists) {
+      return { error: 'Project not found. Cannot create module.' };
+    }
+  
+    // 2. Proceed to create the module
     return this.prisma.module.create({
       data,
     });
   }
+  
 
   // Retrieve all modules
   async findAll(): Promise<Module[]> {

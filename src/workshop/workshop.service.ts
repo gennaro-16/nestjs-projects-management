@@ -56,8 +56,9 @@ export class WorkshopService {
 
    // Get past workshops
    async findPast(): Promise<Workshop[]> {
-    const currentDate = new Date().toISOString(); // ISO format for consistency
-    console.log('Current Date:', currentDate); // Debug currentDate
+    const currentDate = new Date(); // Correct: use Date object
+    console.log('Current Date:', currentDate);
+    
     return this.prisma.workshop.findMany({
       where: {
         date: {
@@ -68,8 +69,9 @@ export class WorkshopService {
   }
   
   async findUpcoming(): Promise<Workshop[]> {
-    const currentDate = new Date().toISOString(); // ISO format for consistency
-    console.log('Current Date:', currentDate); // Debug currentDate
+    const currentDate = new Date(); // Correct: use Date object
+    console.log('Current Date:', currentDate);
+    
     return this.prisma.workshop.findMany({
       where: {
         date: {

@@ -22,7 +22,7 @@ export class AuthController {
   }
 
   // ❌ No Guards → Anyone can sign in
-  @UseGuards(IsVerifiedGuard)
+  //@UseGuards(IsVerifiedGuard)
   @Post('signin')
   async signin(@Body() dto: SigninDto) {
     return this.authService.signin(dto);
