@@ -1,44 +1,4 @@
 
-## 📌 POST /auth/signin – Log in and receive a JWT token
-
-### ✅ Request Body
-
-```json
-{
-  "email": "example.example@esi-sba.dz",
-  "password": "password123"
-}
-
-```
-
-### 🟢 Success Response
-
-```json
-{
-  "message": "Login successful",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNlZDg4OGUyLWY0NjMtNDIxYS1iMjhkLTRlZjVjOTI0NWFhMiIsImVtYWlsIjoieGFtcGxlLmV4YW1wbGUuZXNpLXNiby5kemoiLCJpYXQiOjE3NDM3OTA0MDksImV4cCI6MTc0Mzc5NDAwOX0.nNimLWRX_G_Y5xQ8dfQcxWSoZhCXmD8lbdqEk_jkoKU",
-  "user": {
-    "id": "3ed888e2-f463-421a-b28d-4ef5c9245aa2",
-    "email": "example.example@esi-sba.dz",
-    "firstName": "Mohammed",
-    "lastName": "Rabah",
-    "role": "MEMBER"
-  }
-}
-
-```
-
-### ❌ Error Responses
-
-#### Invalid credentials
-
-```json
-{
-  "message": "Invalid credentials",
-  "error": "Bad Request",
-  "statusCode": 400
-}
-```
 ### 1. **Create a Project**
 - **Method:** `POST`
 - **Route:** `/projects`
@@ -100,6 +60,37 @@ eroors
     "statusCode": 409
 }
 ```
+## 📌 `GET /projects/:projectId/relation` – Get project relation
+Fetches relation data for a specific project.
+
+### ✅ Request Query Parameters
+```json
+{
+  "relationType": "members" // Can be "members", "encadrants", or "juryMembers"
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "projectId": "abc123",
+  "relationType": "members",
+  "relationData": [
+    {
+      "userId": "user456",
+      "name": "John Doe",
+      "role": "MEMBER"
+    },
+    {
+      "userId": "user789",
+      "name": "Jane Smith",
+      "role": "MEMBER"
+    }
+  ]
+}
+```
+
+---
 
 ### 2. **Get Project Relations**
 - **Method:** `GET`
@@ -251,6 +242,32 @@ eroors
 - **Route:** `/projects/noencadrants`
 
 - **Description:** Get all projects that don't have any encadrants.
+
+## 📌 `GET /projects/noencadransts` – Get projects without encadrants
+Fetches a list of projects with no encadrants assigned.
+
+### ✅ Request Body
+No body is required.
+
+### 🟢 Success Response
+```json
+{
+  "projects": [
+    {
+      "id": "project001",
+      "name": "Project Alpha",
+      "membersCount": 3
+    },
+    {
+      "id": "project002",
+      "name": "Project Beta",
+      "membersCount": 2
+    }
+  ]
+}
+```
+
+---
 
 
 ### 7. **Search Projects by Name**
@@ -536,6 +553,32 @@ eroors
 - **Request Body:** 
   - `UpdateProjectDto`
 
+## 📌 `PATCH /projects/:id` – Update a project
+Updates a specific project’s details.
+
+### ✅ Request Body
+```json
+{
+  "name": "Updated Project Name",
+  "description": "Updated description",
+  "startDate": "2025-06-01",
+  "endDate": "2025-12-01"
+}
+```
+
+### 🟢 Success Response
+```json
+{
+  "success": true,
+  "updatedProject": {
+    "id": "abc123",
+    "name": "Updated Project Name",
+    "description": "Updated description",
+    "startDate": "2025-06-01",
+    "endDate": "2025-12-01"
+  }
+}
+```
 ### 12. **Delete a Project**
 - **Method:** `DELETE`
 - **Route:** `/projects/:id`
