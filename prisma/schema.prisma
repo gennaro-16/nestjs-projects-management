@@ -8,12 +8,13 @@ datasource db {
 }
 
 enum Year {
-  _1cp
-  _2csp
-  _1cs
-  _2cs
-  _3cs
+  Y1CP  @map("1cp")
+  Y2CSP @map("2csp")
+  Y1CS  @map("1cs")
+  Y2CS  @map("2cs")
+  Y3CS  @map("3cs")
 }
+
 
 
 
@@ -152,7 +153,7 @@ model Notification {
 enum Role {
   ADMIN
   STAGE_SERVICE
-  PROJECT_LEADER
+  PROJECT_OWNER
   COMMITTEE_MEMBER
   JURY_MEMBER
   SUPERVISOR
