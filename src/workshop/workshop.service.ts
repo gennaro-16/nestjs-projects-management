@@ -82,3 +82,5 @@ export class WorkshopService {
   }
   
 }
+
+// the dto {}
