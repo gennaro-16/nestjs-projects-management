@@ -207,7 +207,7 @@ export class ProjectService {
         owners: { select: { id: true, firstName: true, lastName: true, email: true } },
         members: { select: { id: true, firstName: true, lastName: true, email: true } },
         encadrants: { select: { id: true, firstName: true, lastName: true, email: true } },
-        modules
+        
         
       },
     });
