@@ -176,7 +176,7 @@ export class AuthService {
             <p style="font-size: 16px; color: #444;">Hello,</p>
             <p style="font-size: 16px; color: #444;">You requested to reset your password. Click the button below to proceed:</p>
             <div style="text-align: center; margin: 20px 0;">
-              <a href="http://yourfrontend.com/reset-password?token=${token}" 
+              <a href="https://nestjs-projects-management.onrender.com/reset-password?token=${token}" 
                  style="background: #007bff; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; display: inline-block; font-size: 16px; font-weight: bold;">
                 Reset Your Password
               </a>

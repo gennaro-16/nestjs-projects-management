@@ -85,6 +85,7 @@ Returns users matching the provided first and last names.
     "email": "john.doe@example.com"
   }
 ]
+```
 Get All Users
 GET /
 
@@ -92,7 +93,7 @@ Returns all users in the system.
 
 Response:
 
-json
+```json
 [
   {
     "id": "uuid-string",
@@ -102,6 +103,7 @@ json
     "role": "MEMBER"
   }
 ]
+```
 Create User
 POST /
 
@@ -109,7 +111,7 @@ Creates a new user.
 
 Request Body:
 
-json
+```json
 {
   "email": "new@example.com",
   "password": "securePassword123",
@@ -118,9 +120,10 @@ json
   "phoneNumber": "+9876543210",
   "role": "MEMBER"
 }
+```
 Response:
 
-json
+```json
 {
   "id": "new-uuid-string",
   "email": "new@example.com",
@@ -128,6 +131,7 @@ json
   "lastName": "Smith",
   "createdAt": "2023-01-01T00:00:00.000Z"
 }
+```
 Update User Password
 PATCH /password
 
@@ -135,19 +139,21 @@ Updates a user's password.
 
 Request Body:
 
-json
+```json
 {
   "email": "user@example.com",
   "currentPassword": "oldPassword",
   "newPassword": "newSecurePassword"
 }
+```
 Response:
 
-json
+```json
 {
   "success": true,
   "message": "Password updated successfully"
 }
+```
 🔒 Update Authenticated User Profile
 PATCH /profile
 
@@ -159,12 +165,13 @@ Headers: Authorization: Bearer <token>
 
 Body:
 
-json
+```json
 {
   "firstName": "Updated",
   "lastName": "Name",
   "bio": "New bio information"
 }
+```
 Response:
 Updated user object (same structure as /me)
 
@@ -179,11 +186,12 @@ id (string, required): User's UUID
 
 Response:
 
-json
+```json
 {
   "success": true,
   "message": "User deleted successfully"
 }
+```
 Generate Password Reset Token
 POST /reset-token
 
@@ -191,17 +199,19 @@ Generates a password reset token for a user.
 
 Request Body:
 
-json
+```json
 {
   "email": "user@example.com"
 }
+```
 Response:
 
-json
+```json
 {
   "success": true,
   "message": "Reset token generated and sent to email"
 }
+```
 Validate Reset Token
 POST /validate-reset-token
 
