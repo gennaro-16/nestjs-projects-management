@@ -92,6 +92,13 @@ export class AuthService {
   
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        ownedProjects: { select: { id: true } },
+        memberProjects: { select: { id: true } },
+        supervisedProjects: { select: { id: true } },
+        juryProjects: { select: { id: true } },
+        reviewedProjects: { select: { id: true } },
+      },
     });
   
     if (!user) {
@@ -103,9 +110,29 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
   
+    // Determine project ID and role
+    let projectId = null;
+    let projectRole = null;
+  
+    if (user.ownedProjects.length > 0) {
+      projectId = user.ownedProjects[0].id;
+      projectRole = 'owner';
+    } else if (user.memberProjects.length > 0) {
+      projectId = user.memberProjects[0].id;
+      projectRole = 'member';
+    } else if (user.supervisedProjects.length > 0) {
+      projectId = user.supervisedProjects[0].id;
+      projectRole = 'supervisor';
+    } else if (user.juryProjects.length > 0) {
+      projectId = user.juryProjects[0].id;
+      projectRole = 'jury';
+    } else if (user.reviewedProjects.length > 0) {
+      projectId = user.reviewedProjects[0].id;
+      projectRole = 'reviewer';
+    }
+  
     const token = await this.generateJwtToken(user);
   
-    // Remove null fields dynamically
     const userResponse = Object.fromEntries(
       Object.entries({
         id: user.id,
@@ -117,6 +144,8 @@ export class AuthService {
         bio: user.bio,
         website: user.website,
         role: user.role,
+        projectId: projectId,
+        projectRole: projectRole, // Include project role in response
       }).filter(([_, value]) => value !== null)
     );
   
@@ -126,7 +155,6 @@ export class AuthService {
       user: userResponse,
     };
   }
-  
 
   private async generateJwtToken(user: any) {
     const payload: JwtPayload = { id: user.id, email: user.email };
