@@ -110,24 +110,24 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
   
-    // Determine project ID and role
-    let projectId = null;
+    // Determine projects and role
+    let projects = null;
     let projectRole = null;
   
     if (user.ownedProjects.length > 0) {
-      projectId = user.ownedProjects[0].id;
+      projects = user.ownedProjects[0].id; // Single ID for owner
       projectRole = 'owner';
     } else if (user.memberProjects.length > 0) {
-      projectId = user.memberProjects[0].id;
+      projects = user.memberProjects[0].id; // Single ID for member
       projectRole = 'member';
     } else if (user.supervisedProjects.length > 0) {
-      projectId = user.supervisedProjects[0].id;
+      projects = user.supervisedProjects.map(p => p.id); // Array for supervisor
       projectRole = 'supervisor';
     } else if (user.juryProjects.length > 0) {
-      projectId = user.juryProjects[0].id;
+      projects = user.juryProjects.map(p => p.id); // Array for jury
       projectRole = 'jury';
     } else if (user.reviewedProjects.length > 0) {
-      projectId = user.reviewedProjects[0].id;
+      projects = user.reviewedProjects.map(p => p.id); // Array for reviewer
       projectRole = 'reviewer';
     }
   
@@ -144,8 +144,8 @@ export class AuthService {
         bio: user.bio,
         website: user.website,
         role: user.role,
-        projectId: projectId,
-        projectRole: projectRole, // Include project role in response
+        projects: projects, // Can be single ID or array of IDs
+        projectRole: projectRole,
       }).filter(([_, value]) => value !== null)
     );
   
