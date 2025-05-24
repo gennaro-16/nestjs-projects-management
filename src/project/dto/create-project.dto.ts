@@ -23,7 +23,7 @@ export class CreateProjectDto {
   solution: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()  // Add this decorator to make the field optional
   idea: string;
 
   @IsString()
@@ -43,12 +43,12 @@ export class CreateProjectDto {
   stage?: ProjectStage;
 
   @IsArray()
-  @IsString({ each: true }) // Ensure every element in the array is a string
+  @IsString({ each: true })
   @IsOptional()
-  memberEmails?: string[]; // Field for member emails
+  memberEmails?: string[];
 
   @IsArray()
-  @IsString({ each: true }) // Ensure every element in the array is a string
+  @IsString({ each: true })
   @IsOptional()
-  encadrantEmails?: string[]; // Field for encadrant emails
+  encadrantEmails?: string[];
 }
