@@ -139,7 +139,7 @@ private generateHtmlEmail(projectName: string, relationMessage: string, approval
     return `${relationName} approval successful.`;
   }
   private generateApprovalLink(token: string): string {
-    return `https://your-domain.com/approve?token=${token}`;
+    return `https://startup-incubator-management-a1o5.vercel.app/approve?token=${token}`;
   }
 
     
