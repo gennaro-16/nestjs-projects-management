@@ -65,7 +65,7 @@ model Project {
   about                String
   problem              String
   solution             String
-  idea                 String?
+ 
   targetAudience       String
   competitiveAdvantage String
   motivation           String

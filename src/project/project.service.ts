@@ -88,7 +88,7 @@ export class ProjectService {
         about: dto.about,
         problem: dto.problem,
         solution: dto.solution,
-        idea: "Your project idea here" ,
+       
         targetAudience: dto.targetAudience,
         competitiveAdvantage: dto.competitiveAdvantage,
         motivation: dto.motivation,

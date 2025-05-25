@@ -22,10 +22,7 @@ export class UpdateProjectDto {
   @IsString()
   solution?: string;
 
-  @IsOptional()
-  @IsString()
-  idea?: string;
-
+ 
   @IsOptional()
   @IsString()
   targetAudience?: string;
