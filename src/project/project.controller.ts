@@ -6,8 +6,8 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { OwnershipGuard } from 'src/guards/ownership/ownership.guard';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtService } from '@nestjs/jwt';
-import { ProjectType, ProjectStatus, ProjectStage } from '../types/project.types';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {  ProjectStatus, ProjectStage } from '../types/project.types';
+import { BadRequestException } from '@nestjs/common';
 
 @Controller('projects')
 export class ProjectController {
