@@ -36,7 +36,15 @@ export class UserService {
   }
 
   async getAllUsers() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        lastName: true,
+        firstName: true,
+        role: true,
+        year: true
+      }
+    });
   }
 
   async comparePasswords(plainText: string, hashedPassword: string) {
