@@ -81,22 +81,26 @@ export class ProjectService {
     }
   
     // Step 10: Create the project
-    const project = await this.prisma.project.create({
-      data: {
-        name: dto.name,
-        industry: dto.industry,
-        about: dto.about,
-        problem: dto.problem,
-        solution: dto.solution,
-        idea: dto.idea,
-        targetAudience: dto.targetAudience,
-        competitiveAdvantage: dto.competitiveAdvantage,
-        motivation: dto.motivation,
-        status: ProjectStatus.PENDING, // Default status
-        stage: dto.stage || ProjectStage.IDEA, // Default stage
-        owners: { connect: { id: userId } }, // Set the user as the project owner
-      },
-    });
+    const data: any = {
+      name: dto.name,
+      industry: dto.industry,
+      about: dto.about,
+      problem: dto.problem,
+      solution: dto.solution,
+      targetAudience: dto.targetAudience,
+      competitiveAdvantage: dto.competitiveAdvantage,
+      motivation: dto.motivation,
+      status: ProjectStatus.PENDING,
+      stage: dto.stage || ProjectStage.IDEA,
+      owners: { connect: { id: userId } },
+    };
+    
+    if (dto.idea) {
+      data.idea = dto.idea;
+    }
+    
+    const project = await this.prisma.project.create({ data });
+    
   
     // Step 11: Create approval statuses for members
     if (dto.memberEmails && dto.memberEmails.length > 0) {

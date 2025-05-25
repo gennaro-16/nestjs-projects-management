@@ -21,9 +21,9 @@ export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
   solution: string;
-
+  @IsOptional()
   @IsString()
-  @IsOptional()  // Add this decorator to make the field optional
+   // Add this decorator to make the field optional
   idea: string;
 
   @IsString()
