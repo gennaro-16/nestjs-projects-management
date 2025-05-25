@@ -13,7 +13,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
-   // Only authenticated users can create a project
+  @UseGuards(AuthGuard) // Only authenticated users can create a project
   @Post()
   async createProject(@Request() req, @Body() dto: CreateProjectDto) {
     return this.projectService.createProject(req.user.id, dto);
