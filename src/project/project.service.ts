@@ -7,6 +7,8 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ConflictException } from '@nestjs/common';
 import {InternalServerErrorException} from '@nestjs/common';
+import { CreateSessionDto } from './dto/create-session.dto';
+
 @Injectable()
 export class ProjectService {
   constructor(
@@ -548,6 +550,42 @@ async getTopProjectsByMembers() {
         data: { percentage: moduleData.documentation, updatedAt: new Date() }
       })
     ]);
+  }
+
+  async createSession(projectId: string, data: CreateSessionDto) {
+    return this.prisma.session.create({
+      data: {
+        ...data,
+        projectId,
+      },
+    });
+  }
+
+  async getProjectSessions(projectId: string) {
+    return this.prisma.session.findMany({
+      where: {
+        projectId,
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+  }
+
+  async getSessionById(sessionId: string) {
+    return this.prisma.session.findUnique({
+      where: {
+        id: sessionId,
+      },
+    });
+  }
+
+  async deleteSession(sessionId: string) {
+    return this.prisma.session.delete({
+      where: {
+        id: sessionId,
+      },
+    });
   }
 }
 

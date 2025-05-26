@@ -80,8 +80,9 @@ model Project {
   members              User[]           @relation("ProjectMembers")
   owners               User[]           @relation("ProjectOwners")
   scientificReviewers  User[]           @relation("ProjectScientificReviewers")
-  staticModules StaticModule[] 
+  staticModules        StaticModule[] 
   modules              Module[]
+  sessions             Session[]
 }
 
 model Module {
@@ -191,4 +192,14 @@ enum NotificationType {
   INVITATION
   APPROVAL_REQUEST
   GENERAL
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  date      DateTime
+  summary   String   // Feedback/summary of the meeting
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

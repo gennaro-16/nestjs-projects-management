@@ -10,6 +10,7 @@ import { ProjectStatus, ProjectStage } from '../types/project.types';
 import { Prisma } from '@prisma/client';
 import { UpdateModuleDto } from './dto/update-static-module.dto';
 import { UpdateAllModulesDto } from './dto/update-all-modules.dto';
+import { CreateSessionDto } from './dto/create-session.dto';
 
 @Controller('projects')
 export class ProjectController {
@@ -178,6 +179,38 @@ async getProjectRelation(
     @Body() moduleData: UpdateAllModulesDto
   ) {
     return this.projectService.updateAllStaticModules(projectId, moduleData);
+  }
+
+  // Session endpoints
+  @UseGuards(AuthGuard)
+  @Post(':projectId/sessions')
+  async createSession(
+    @Param('projectId') projectId: string,
+    @Body() sessionData: CreateSessionDto
+  ) {
+    return this.projectService.createSession(projectId, sessionData);
+  }
+
+  @Get(':projectId/sessions')
+  async getProjectSessions(@Param('projectId') projectId: string) {
+    return this.projectService.getProjectSessions(projectId);
+  }
+
+  @Get(':projectId/sessions/:sessionId')
+  async getSessionById(
+    @Param('projectId') projectId: string,
+    @Param('sessionId') sessionId: string
+  ) {
+    return this.projectService.getSessionById(sessionId);
+  }
+
+  @UseGuards(AuthGuard, OwnershipGuard)
+  @Delete(':projectId/sessions/:sessionId')
+  async deleteSession(
+    @Param('projectId') projectId: string,
+    @Param('sessionId') sessionId: string
+  ) {
+    return this.projectService.deleteSession(sessionId);
   }
 }
 
