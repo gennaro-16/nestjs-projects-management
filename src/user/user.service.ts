@@ -40,6 +40,7 @@ export class UserService {
       select: {
         id: true,
         lastName: true,
+        email: true,
         firstName: true,
         role: true,
         year: true
