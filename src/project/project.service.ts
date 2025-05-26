@@ -514,6 +514,41 @@ async getTopProjectsByMembers() {
   
   
   }
+
+  async updateAllStaticModules(projectId: string, moduleData: {
+    research: number;
+    development: number;
+    testing: number;
+    documentation: number;
+  }) {
+    // Check if project exists
+    const projectExists = await this.prisma.project.findUnique({
+      where: { id: projectId }
+    });
+    if (!projectExists) {
+      throw new NotFoundException('Project not found');
+    }
+
+    // Update all modules in a transaction
+    return this.prisma.$transaction([
+      this.prisma.staticModule.update({
+        where: { name_projectId: { name: 'Research', projectId } },
+        data: { percentage: moduleData.research, updatedAt: new Date() }
+      }),
+      this.prisma.staticModule.update({
+        where: { name_projectId: { name: 'Development', projectId } },
+        data: { percentage: moduleData.development, updatedAt: new Date() }
+      }),
+      this.prisma.staticModule.update({
+        where: { name_projectId: { name: 'Testing', projectId } },
+        data: { percentage: moduleData.testing, updatedAt: new Date() }
+      }),
+      this.prisma.staticModule.update({
+        where: { name_projectId: { name: 'Documentation', projectId } },
+        data: { percentage: moduleData.documentation, updatedAt: new Date() }
+      })
+    ]);
+  }
 }
 
 /*// ✅ Filter by stage

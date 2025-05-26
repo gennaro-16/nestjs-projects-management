@@ -1,4 +1,3 @@
-
 import { Controller, Post, Body, Query, UseGuards, Request, Get, Patch, Delete, Param, BadRequestException } from '@nestjs/common';
 
 import { ProjectService } from './project.service';
@@ -9,7 +8,9 @@ import { OwnershipGuard } from 'src/guards/ownership/ownership.guard';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectStatus, ProjectStage } from '../types/project.types';
 import { Prisma } from '@prisma/client';
-import {UpdateModuleDto} from './dto/update-static-module.dto';
+import { UpdateModuleDto } from './dto/update-static-module.dto';
+import { UpdateAllModulesDto } from './dto/update-all-modules.dto';
+
 @Controller('projects')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
@@ -168,7 +169,17 @@ async getProjectRelation(
       moduleName,
       percentage
     );
-  }}
+  }
+
+  @Patch(':projectId/all-modules')
+  @UseGuards(AuthGuard)
+  async updateAllModules(
+    @Param('projectId') projectId: string,
+    @Body() moduleData: UpdateAllModulesDto
+  ) {
+    return this.projectService.updateAllStaticModules(projectId, moduleData);
+  }
+}
 
 
 /*// 
