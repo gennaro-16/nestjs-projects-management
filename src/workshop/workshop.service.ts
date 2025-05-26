@@ -56,29 +56,52 @@ export class WorkshopService {
 
    // Get past workshops
    async findPast(): Promise<Workshop[]> {
-    const currentDate = new Date(); // Correct: use Date object
-    console.log('Current Date:', currentDate);
-    
-    return this.prisma.workshop.findMany({
-      where: {
-        date: {
-          lt: currentDate,
+    try {
+      const currentDate = new Date();
+      console.log('Current Date:', currentDate.toISOString());
+      
+      // First, get all workshops to check their dates
+      const allWorkshops = await this.prisma.workshop.findMany();
+      console.log('All workshops:', allWorkshops.map(w => ({
+        id: w.id,
+        title: w.title,
+        date: w.date.toISOString()
+      })));
+      
+      const workshops = await this.prisma.workshop.findMany({
+        where: {
+          date: {
+            lt: currentDate,
+          },
         },
-      },
-    });
+      });
+      
+      console.log('Found past workshops:', workshops.map(w => ({
+        id: w.id,
+        title: w.title,
+        date: w.date.toISOString()
+      })));
+      return workshops;
+    } catch (error) {
+      console.error('Error in findPast:', error);
+      throw error;
+    }
   }
   
   async findUpcoming(): Promise<Workshop[]> {
-    const currentDate = new Date(); // Correct: use Date object
+    const currentDate = new Date();
     console.log('Current Date:', currentDate);
     
-    return this.prisma.workshop.findMany({
+    const workshops = await this.prisma.workshop.findMany({
       where: {
         date: {
           gt: currentDate,
         },
       },
     });
+    
+    console.log('Found upcoming workshops:', workshops);
+    return workshops;
   }
   
 }

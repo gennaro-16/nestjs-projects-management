@@ -1,14 +1,15 @@
-import { Controller, Post, Body,Query, UseGuards, Request, Get, Patch, Delete, Param } from '@nestjs/common';
+
+import { Controller, Post, Body, Query, UseGuards, Request, Get, Patch, Delete, Param, BadRequestException } from '@nestjs/common';
+
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { OwnershipGuard } from 'src/guards/ownership/ownership.guard';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { JwtService } from '@nestjs/jwt';
-import {  ProjectStatus, ProjectStage } from '../types/project.types';
-import { BadRequestException } from '@nestjs/common';
-
+import { ProjectStatus, ProjectStage } from '../types/project.types';
+import { Prisma } from '@prisma/client';
+import {UpdateModuleDto} from './dto/update-static-module.dto';
 @Controller('projects')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
@@ -20,14 +21,25 @@ export class ProjectController {
   }
 //get all memebrs , encadrants ...../
 @Get(':projectId/relation')
+ // Add authentication if needed
 async getProjectRelation(
   @Param('projectId') projectId: string,
-  @Query('relationType') relationType: string, // Pass the relation type as a query parameter
+  @Query('relationType') relationType: string,
 ) {
   if (!relationType) {
     throw new BadRequestException('Relation type is required');
   }
-  return this.projectService.getProjectRelation(projectId, relationType);
+
+  // Validate the relation type
+  const validRelations = ['members', 'encadrants', 'juryMembers', 'owners', 'scientificReviewers'];
+  if (!validRelations.includes(relationType)) {
+    throw new BadRequestException(`Invalid relation type. Must be one of: ${validRelations.join(', ')}`);
+  }
+
+  return this.projectService.getProjectTeamMembers(
+    projectId,
+    relationType as 'members' | 'encadrants' | 'juryMembers' | 'owners' | 'scientificReviewers'
+  );
 }
 
   //add member to a project 
@@ -143,7 +155,20 @@ async getProjectRelation(
   async getTopProjectsByMembers() {
     return this.projectService.getTopProjectsByMembers();
   }
-}
+
+  @Patch(':projectId/modules')
+  @UseGuards(AuthGuard)
+
+  async updateModule(
+    @Param('projectId') projectId: string,
+    @Body() { moduleName, percentage }: UpdateModuleDto
+  ) {
+    return this.projectService.updateStaticModule(
+      projectId,
+      moduleName,
+      percentage
+    );
+  }}
 
 
 /*// 

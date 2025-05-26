@@ -17,6 +17,16 @@ export class WorkshopController {
     return this.workshopService.findAll();
   }
 
+  @Get('past')
+  findPast() {
+    return this.workshopService.findPast();
+  }
+
+  @Get('upcoming')
+  findUpcoming() {
+    return this.workshopService.findUpcoming();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.workshopService.findOne(id);
@@ -30,14 +40,5 @@ export class WorkshopController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.workshopService.remove(id);
-  }
-  @Get('past')
-  findPast() {
-    return this.workshopService.findPast();
-  }
-
-  @Get('upcoming')
-  findUpcoming() {
-    return this.workshopService.findUpcoming();
   }
 }

@@ -6,6 +6,7 @@ import { ApprovalStatusService } from '../approval-status/approval-status.servic
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ConflictException } from '@nestjs/common';
+import {InternalServerErrorException} from '@nestjs/common';
 @Injectable()
 export class ProjectService {
   constructor(
@@ -13,6 +14,46 @@ export class ProjectService {
     private readonly approvalStatusService: ApprovalStatusService, // Inject ApprovalStatusService
   ) {}
 
+
+  async updateStaticModule(
+    projectId: string,
+    moduleName: string,
+    percentage: number
+  ) {
+    // Validate percentage range
+    if (percentage < 0 || percentage > 100) {
+      throw new BadRequestException('Percentage must be between 0 and 100');
+    }
+  
+    // Check if project exists
+    const projectExists = await this.prisma.project.findUnique({
+      where: { id: projectId }
+    });
+    if (!projectExists) {
+      throw new NotFoundException('Project not found');
+    }
+  
+    // Update the module
+    return this.prisma.staticModule.update({
+      where: {
+        name_projectId: {
+          name: moduleName,
+          projectId: projectId
+        }
+      },
+      data: {
+        percentage: percentage,
+        updatedAt: new Date() // Explicit update timestamp
+      },
+      select: {
+        id: true,
+        name: true,
+        percentage: true,
+        updatedAt: true
+      }
+    });
+  }
+  
   async createProject(userId: string, dto: CreateProjectDto): Promise<any> {
     // Step 1: Validate if user exists
     const user = await this.prisma.user.findUnique({
@@ -28,7 +69,7 @@ export class ProjectService {
       where: {
         name: dto.name,
         OR: [
-          { industry: { equals: dto.industry, mode: 'insensitive' } },  // Case-insensitive check for same industry
+          { industry: { equals: dto.industry, mode: 'insensitive' } },
         ],
       },
     });
@@ -72,53 +113,77 @@ export class ProjectService {
     }
   
     // Step 7: Check if the user has active projects
- 
+    // [Your existing active projects check...]
   
-   
     // Step 9: Validate project description length
     if (dto.about.length < 20) {
       throw new BadRequestException('The project description must be at least 20 characters long');
     }
-  
-    // Step 10: Create the project
-    const project = await this.prisma.project.create({
-      data: {
-        name: dto.name,
-        industry: dto.industry,
-        about: dto.about,
-        problem: dto.problem,
-        solution: dto.solution,
-       
-        targetAudience: dto.targetAudience,
-        competitiveAdvantage: dto.competitiveAdvantage,
-        motivation: dto.motivation,
-        status: ProjectStatus.PENDING, // Default status
-        stage: dto.stage || ProjectStage.IDEA, // Default stage
-        owners: { connect: { id: userId } }, // Set the user as the project owner
-      },
+
+    // Define static modules (customize names as needed)
+    const staticModules = [
+        { name: 'Research', percentage: 0 },
+        { name: 'Development', percentage: 0 },
+        { name: 'Testing', percentage: 0 },
+        { name: 'Documentation', percentage: 0 }
+    ];
+
+    // Create project with all relations in a transaction
+    return this.prisma.$transaction(async (tx) => {
+        // Create the project with static modules
+        const project = await tx.project.create({
+            data: {
+                name: dto.name,
+                industry: dto.industry,
+                about: dto.about,
+                problem: dto.problem,
+                solution: dto.solution,
+                targetAudience: dto.targetAudience,
+                competitiveAdvantage: dto.competitiveAdvantage,
+                motivation: dto.motivation,
+                status: ProjectStatus.PENDING,
+                stage: dto.stage || ProjectStage.IDEA,
+                owners: { connect: { id: userId } },
+                staticModules: {
+                    create: staticModules
+                }
+            },
+            include: {
+                staticModules: true,
+                owners: {
+                    select: {
+                        id: true,
+                        email: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                }
+            }
+        });
+
+        // Create approval statuses for members
+        if (dto.memberEmails && dto.memberEmails.length > 0) {
+            await this.approvalStatusService.generateApprovalRequests(
+                dto.memberEmails,
+                project.id,
+                'members'
+            );
+        }
+
+        // Create approval statuses for encadrants
+        if (dto.encadrantEmails && dto.encadrantEmails.length > 0) {
+            await this.approvalStatusService.generateApprovalRequests(
+                dto.encadrantEmails,
+                project.id,
+                'encadrants'
+            );
+        }
+
+        return project;
     });
+}
+
   
-    // Step 11: Create approval statuses for members
-    if (dto.memberEmails && dto.memberEmails.length > 0) {
-      await this.approvalStatusService.generateApprovalRequests(
-        dto.memberEmails,
-        project.id,
-        'members' // Relation name for members
-      );
-    }
-  
-    // Step 12: Create approval statuses for encadrants
-    if (dto.encadrantEmails && dto.encadrantEmails.length > 0) {
-      await this.approvalStatusService.generateApprovalRequests(
-        dto.encadrantEmails,
-        project.id,
-        'encadrants' // Relation name for encadrants
-      );
-    }
-  
-    // Return the created project
-    return project;
-  }
   
   //add user to project member encadrant...
   async attachUserToProject(projectId: string, userIdentifier: string, relationType: string) {
@@ -181,6 +246,39 @@ export class ProjectService {
     return results;
   }
   
+  async getProjectTeamMembers(
+    projectId: string,
+    relationType: 'members' | 'encadrants' | 'juryMembers' | 'owners' | 'scientificReviewers'
+  ) {
+    try {
+      const projectWithTeam = await this.prisma.project.findUnique({
+        where: {
+          id: projectId,
+        },
+        include: {
+          [relationType]: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              year: true,
+              role: true,
+            },
+          },
+        },
+      });
+  
+      if (!projectWithTeam) {
+        throw new NotFoundException(`Project with ID ${projectId} not found`);
+      }
+  
+      return projectWithTeam[relationType];
+    } catch (error) {
+      // Handle or rethrow the error appropriately
+      throw new InternalServerErrorException('Failed to fetch project team members');
+    }
+  }
   async searchProjectByOwner(ownerName: string) {
     return this.prisma.project.findMany({
       where: {

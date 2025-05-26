@@ -80,6 +80,7 @@ model Project {
   members              User[]           @relation("ProjectMembers")
   owners               User[]           @relation("ProjectOwners")
   scientificReviewers  User[]           @relation("ProjectScientificReviewers")
+  staticModules StaticModule[] 
   modules              Module[]
 }
 
@@ -148,6 +149,18 @@ model Notification {
   createdAt        DateTime         @default(now())
   project          Project?         @relation(fields: [projectId], references: [id])
   user             User             @relation(fields: [userId], references: [id])
+}
+
+model StaticModule {
+  id          String   @id @default(uuid())
+  name        String
+  percentage  Int      @default(0)
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, projectId])
 }
 
 enum Role {
