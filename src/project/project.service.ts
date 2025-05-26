@@ -112,15 +112,12 @@ export class ProjectService {
       }
     }
   
-    // Step 7: Check if the user has active projects
-    // [Your existing active projects check...]
-  
-    // Step 9: Validate project description length
+    // Step 7: Validate project description length
     if (dto.about.length < 20) {
       throw new BadRequestException('The project description must be at least 20 characters long');
     }
 
-    // Define static modules (customize names as needed)
+    // Define static modules
     const staticModules = [
         { name: 'Research', percentage: 0 },
         { name: 'Development', percentage: 0 },
@@ -128,60 +125,60 @@ export class ProjectService {
         { name: 'Documentation', percentage: 0 }
     ];
 
-    // Create project with all relations in a transaction
-    return this.prisma.$transaction(async (tx) => {
-        // Create the project with static modules
-        const project = await tx.project.create({
-            data: {
-                name: dto.name,
-                industry: dto.industry,
-                about: dto.about,
-                problem: dto.problem,
-                solution: dto.solution,
-                targetAudience: dto.targetAudience,
-                competitiveAdvantage: dto.competitiveAdvantage,
-                motivation: dto.motivation,
-                status: ProjectStatus.PENDING,
-                stage: dto.stage || ProjectStage.IDEA,
-                owners: { connect: { id: userId } },
-                staticModules: {
-                    create: staticModules
-                }
-            },
-            include: {
-                staticModules: true,
-                owners: {
-                    select: {
-                        id: true,
-                        email: true,
-                        firstName: true,
-                        lastName: true
-                    }
-                }
+    try {
+      // First create the project
+      const project = await this.prisma.project.create({
+        data: {
+          name: dto.name,
+          industry: dto.industry,
+          about: dto.about,
+          problem: dto.problem,
+          solution: dto.solution,
+          targetAudience: dto.targetAudience,
+          competitiveAdvantage: dto.competitiveAdvantage,
+          motivation: dto.motivation,
+          status: ProjectStatus.PENDING,
+          stage: dto.stage || ProjectStage.IDEA,
+          owners: { connect: { id: userId } },
+          staticModules: {
+            create: staticModules
+          }
+        },
+        include: {
+          staticModules: true,
+          owners: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true
             }
-        });
-
-        // Create approval statuses for members
-        if (dto.memberEmails && dto.memberEmails.length > 0) {
-            await this.approvalStatusService.generateApprovalRequests(
-                dto.memberEmails,
-                project.id,
-                'members'
-            );
+          }
         }
+      });
 
-        // Create approval statuses for encadrants
-        if (dto.encadrantEmails && dto.encadrantEmails.length > 0) {
-            await this.approvalStatusService.generateApprovalRequests(
-                dto.encadrantEmails,
-                project.id,
-                'encadrants'
-            );
-        }
+      // Now that we have a saved project, generate approval statuses
+      if (dto.memberEmails && dto.memberEmails.length > 0) {
+        await this.approvalStatusService.generateApprovalRequests(
+          dto.memberEmails,
+          project.id,
+          'members'
+        );
+      }
 
-        return project;
-    });
-}
+      if (dto.encadrantEmails && dto.encadrantEmails.length > 0) {
+        await this.approvalStatusService.generateApprovalRequests(
+          dto.encadrantEmails,
+          project.id,
+          'encadrants'
+        );
+      }
+
+      return project;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create project: ' + error.message);
+    }
+  }
 
   
   
@@ -352,9 +349,32 @@ export class ProjectService {
   }
 
   async deleteProject(id: string) {
-    return this.prisma.project.delete({
-      where: { id },
-    });
+    try {
+      // First check if the project exists
+      const project = await this.prisma.project.findUnique({
+        where: { id },
+      });
+
+      if (!project) {
+        throw new NotFoundException(`Project with ID ${id} not found`);
+      }
+
+      // Proceed with deletion
+      return await this.prisma.project.delete({
+        where: { id },
+        include: {
+          owners: true,
+          members: true,
+          encadrants: true,
+          staticModules: true
+        }
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to delete project');
+    }
   }
 
   async searchProjectByIndustry(industry: string) {
