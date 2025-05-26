@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query, UseGuards, Request, Get, Patch, Delete, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Query, UseGuards, Request, Get, Patch, Delete, Param, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -21,28 +21,44 @@ export class ProjectController {
   async createProject(@Request() req, @Body() dto: CreateProjectDto) {
     return this.projectService.createProject(req.user.id, dto);
   }
-//get all memebrs , encadrants ...../
-@Get(':projectId/relation')
- // Add authentication if needed
-async getProjectRelation(
-  @Param('projectId') projectId: string,
-  @Query('relationType') relationType: string,
-) {
-  if (!relationType) {
-    throw new BadRequestException('Relation type is required');
-  }
 
-  // Validate the relation type
-  const validRelations = ['members', 'encadrants', 'juryMembers', 'owners', 'scientificReviewers'];
-  if (!validRelations.includes(relationType)) {
-    throw new BadRequestException(`Invalid relation type. Must be one of: ${validRelations.join(', ')}`);
-  }
+  @Get(':projectId/relation')
+  async getProjectRelation(
+    @Param('projectId') projectId: string,
+    @Query('relationType') relationType: string,
+  ) {
+    if (!projectId) {
+      throw new BadRequestException('Project ID is required');
+    }
 
-  return this.projectService.getProjectTeamMembers(
-    projectId,
-    relationType as 'members' | 'encadrants' | 'juryMembers' | 'owners' | 'scientificReviewers'
-  );
-}
+    if (!relationType) {
+      throw new BadRequestException('Relation type is required');
+    }
+
+    // Validate the relation type
+    const validRelations = ['members', 'encadrants', 'juryMembers', 'owners', 'scientificReviewers'];
+    if (!validRelations.includes(relationType)) {
+      throw new BadRequestException(`Invalid relation type. Must be one of: ${validRelations.join(', ')}`);
+    }
+
+    try {
+      const result = await this.projectService.getProjectTeamMembers(
+        projectId,
+        relationType as 'members' | 'encadrants' | 'juryMembers' | 'owners' | 'scientificReviewers'
+      );
+
+      return {
+        success: true,
+        message: `Successfully retrieved project ${relationType}`,
+        data: result
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Failed to get project ${relationType}: ${error.message}`);
+    }
+  }
 
   //add member to a project 
   // Example route handler for /add-user

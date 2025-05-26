@@ -249,7 +249,16 @@ export class ProjectService {
     projectId: string,
     relationType: 'members' | 'encadrants' | 'juryMembers' | 'owners' | 'scientificReviewers'
   ) {
+    if (!projectId) {
+      throw new BadRequestException('Project ID is required');
+    }
+
     try {
+      const validRelations = ['members', 'encadrants', 'juryMembers', 'owners', 'scientificReviewers'];
+      if (!validRelations.includes(relationType)) {
+        throw new BadRequestException(`Invalid relation type: ${relationType}`);
+      }
+
       const projectWithTeam = await this.prisma.project.findUnique({
         where: {
           id: projectId,
@@ -263,6 +272,8 @@ export class ProjectService {
               lastName: true,
               year: true,
               role: true,
+              createdAt: true,
+              updatedAt: true
             },
           },
         },
@@ -272,10 +283,16 @@ export class ProjectService {
         throw new NotFoundException(`Project with ID ${projectId} not found`);
       }
   
-      return projectWithTeam[relationType];
+      return {
+        success: true,
+        data: projectWithTeam[relationType],
+        count: projectWithTeam[relationType].length
+      };
     } catch (error) {
-      // Handle or rethrow the error appropriately
-      throw new InternalServerErrorException('Failed to fetch project team members');
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Failed to fetch project ${relationType}: ${error.message}`);
     }
   }
   async searchProjectByOwner(ownerName: string) {
