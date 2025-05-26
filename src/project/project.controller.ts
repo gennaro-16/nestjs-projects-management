@@ -22,8 +22,8 @@ export class ProjectController {
     return this.projectService.createProject(req.user.id, dto);
   }
 
-  @Get(':projectId/relation')
-  async getProjectRelation(
+  @Get(':projectId/team')
+  async getProjectTeam(
     @Param('projectId') projectId: string,
     @Query('relationType') relationType: string,
   ) {
