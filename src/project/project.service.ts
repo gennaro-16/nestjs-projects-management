@@ -604,6 +604,29 @@ async getTopProjectsByMembers() {
       },
     });
   }
+
+  async getProjectModules(projectId: string) {
+    // Check if project exists
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+      include: {
+        staticModules: {
+          select: {
+            id: true,
+            name: true,
+            percentage: true,
+            updatedAt: true
+          }
+        }
+      }
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    return project.staticModules;
+  }
 }
 
 /*// ✅ Filter by stage

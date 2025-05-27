@@ -174,9 +174,13 @@ export class ProjectController {
     return this.projectService.getTopProjectsByMembers();
   }
 
+  @Get(':projectId/modules')
+  async getProjectModules(@Param('projectId') projectId: string) {
+    return this.projectService.getProjectModules(projectId);
+  }
+
   @Patch(':projectId/modules')
   @UseGuards(AuthGuard)
-
   async updateModule(
     @Param('projectId') projectId: string,
     @Body() { moduleName, percentage }: UpdateModuleDto
