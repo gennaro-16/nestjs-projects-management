@@ -1,0 +1,14 @@
+# Database Configuration
+DATABASE_URL="postgresql://<DB_USER>:<DB_PASSWORD>@<HOST>/<DB_NAME>?sslmode=require"
+
+# JWT Configuration
+JWT_SECRET="your_jwt_secret_key"
+
+# App Port
+PORT=3000
+
+# Email Verification
+EMAIL_USER="your_email@example.com"
+EMAIL_PASS="your_app_password"
+MYEMAIL="your_noreply_address@example.com"
+Mysecret="your_email_secret_or_token"

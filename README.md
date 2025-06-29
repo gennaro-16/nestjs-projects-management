@@ -1,25 +1,37 @@
 # NestJS API with Prisma & PostgreSQL
 
-## Project Overview
+NestJS API for Projects Management
+This is a backend API built from scratch using NestJS, Prisma, and PostgreSQL, created as part of a school project. Even though the subject was basic, the implementation focuses on real-world concepts like layered security, role-based access control, and email workflows.
 
-This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It includes a robust authentication system with JWT, email verification, role-based access control, and various user and project management functionalities.
+> **💡 Note:** This API serves as a solid foundation for project management systems. It can be further enhanced with additional security measures, custom guards, rate limiting, advanced logging, monitoring, and more sophisticated business logic to meet enterprise-level requirements.
 
-### Features Implemented
+## ⚙️ Features
 
-- **Authentication**
-  - JWT-based authentication
-  - Email verification system
-  - Role-based access control (RBAC)
-  - Guards for authentication, role permissions, and verification status
-- **User & Project Management**
-  - CRUD operations for users and projects
-  - Approval system (implementation in progress)
-  - Task and milestone management
-  - Notifications & audit logging
-- **Security & Middleware**
-  - Custom authentication guards
-  - Exception filters for handling errors
-  - Logging middleware for tracking requests
+### Authentication & Access
+- JWT-based login system
+- Email verification with approval flows
+- Guards: AuthGuard, RolesGuard, VerifiedGuard, OwnershipGuard
+
+### User & Project Management
+- Full CRUD for users and projects
+- Role-based control (members, owners, mentors)
+- Approval system before adding users to teams or projects
+
+### Workshops & Progress
+- Track upcoming and past workshops
+- Manage progress and milestones
+
+### Extras
+- Sends verification emails
+- Modular structure using Prisma and DTOs
+- Simple logging and error handling
+
+## 🧱 Stack
+- NestJS
+- Prisma ORM
+- PostgreSQL
+- TypeScript
+- (Optional: Docker-ready setup if needed)
 
 ## Project Structure
 
@@ -139,14 +151,16 @@ src
 *Entity Relationship Diagram showing the database schema and relationships between entities.*
 
 ## API Endpoints
-## Host : https://nestjs-projects-management.onrender.com
+
+**Host:** https://nestjs-projects-management.onrender.com
+
 ### Authentication
 
-## POST /auth/signup – Register a new user
+#### POST /auth/signup – Register a new user
 
 Registers a new user. Optional fields should be placed at the bottom of the request body.
 
-### ✅ Request Body
+##### ✅ Request Body
 
 ```json
 {
@@ -155,15 +169,14 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
   "firstName": "Mohammed",
   "lastName": "Rabah",
   "role": "MEMBER",
-  //optional fields
-  "phoneNumber": "+213567890123",  // Optional, format: +[country code][phone number]
-  "profilePicture": "http://example.com/profile.jpg",  // Optional, URL format
-  "bio": "Software developer from Algeria, passionate about tech.",  // Optional
-  "website": "http://example.com",  // Optional, URL format
+  "phoneNumber": "+213567890123",
+  "profilePicture": "http://example.com/profile.jpg",
+  "bio": "Software developer from Algeria, passionate about tech.",
+  "website": "http://example.com"
 }
 ```
 
-### 🟢 Success Response
+##### 🟢 Success Response
 
 ```json
 {
@@ -173,19 +186,18 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## POST /auth/signin – Log in and receive a JWT token
+#### POST /auth/signin – Log in and receive a JWT token
 
-### ✅ Request Body
+##### ✅ Request Body
 
 ```json
 {
   "email": "example.example@esi-sba.dz",
   "password": "password123"
 }
-
 ```
 
-### 🟢 Success Response
+##### 🟢 Success Response
 
 ```json
 {
@@ -199,12 +211,11 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
     "role": "MEMBER"
   }
 }
-
 ```
 
-### ❌ Error Responses
+##### ❌ Error Responses
 
-#### Invalid credentials
+###### Invalid credentials
 
 ```json
 {
@@ -214,7 +225,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 }
 ```
 
-#### Email not verified
+###### Email not verified
 
 ```json
 {
@@ -226,9 +237,9 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## POST /auth/verify-email – Verify email using a token
+#### POST /auth/verify-email – Verify email using a token
 
-### ✅ Request Body
+##### ✅ Request Body
 
 ```json
 {
@@ -236,7 +247,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 }
 ```
 
-### 🟢 Success Response
+##### 🟢 Success Response
 
 ```json
 {
@@ -246,9 +257,9 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## POST /auth/forgot-password – Request password reset
+#### POST /auth/forgot-password – Request password reset
 
-### ✅ Request Body
+##### ✅ Request Body
 
 ```json
 {
@@ -256,11 +267,19 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 }
 ```
 
+##### 🟢 Success Response
+
+```json
+{
+  "message": "Password reset email sent successfully. Please check your email for reset instructions."
+}
+```
+
 ---
 
-## POST /auth/reset-password – Reset password using a token
+#### POST /auth/reset-password – Reset password using a token
 
-### ✅ Request Body
+##### ✅ Request Body
 
 ```json
 {
@@ -269,23 +288,32 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 }
 ```
 
+##### 🟢 Success Response
+
+```json
+{
+  "message": "Password reset successfully!"
+}
+```
+
 ---
-# Project API Documentation
+
+## Project API Documentation
 
 This document outlines the available routes for managing projects, members, and associated data within the system.
 
-## Routes
-## API Reference
-- [projects API](readme/projects.md)
-- [users](readme/users.md)
-
+### API Reference
+- [Projects API](readme/projects.md)
+- [Users API](readme/users.md)
+- [Modules API](readme/module.md)
+- [Workshops API](readme/workshop.md)
 
 ### Approval System (In Progress)
 
 - `POST /approval-status/request` - Request approval
 - `POST /approval-status/approve` - Approve a request
 
-## What's Left to Implement
+### What's Left to Implement
 
 - Finalizing the approval system
 - Additional utility endpoints
@@ -326,6 +354,58 @@ This document outlines the available routes for managing projects, members, and 
 
 ```bash
 $ npm install
+```
+
+## Environment Variables
+
+Before running the application, you need to set up your environment variables. Copy the `env-example` file to `.env` and fill in your actual values:
+
+```bash
+$ cp env-example .env
+```
+
+### Environment Variables Configuration
+
+```env
+# Database Configuration
+DATABASE_URL="postgresql://<DB_USER>:<DB_PASSWORD>@<HOST>/<DB_NAME>?sslmode=require"
+
+# JWT Configuration
+JWT_SECRET="your_jwt_secret_key"
+
+# App Port
+PORT=3000
+
+# Email Verification
+EMAIL_USER="your_email@example.com"
+EMAIL_PASS="your_app_password"
+MYEMAIL="your_noreply_address@example.com"
+Mysecret="your_email_secret_or_token"
+```
+
+### Variable Descriptions
+
+- **DATABASE_URL**: PostgreSQL connection string with your database credentials
+- **JWT_SECRET**: Secret key for JWT token signing (use a strong, random string)
+- **PORT**: Port number for the application to run on (default: 3000)
+- **EMAIL_USER**: Email address used for sending verification emails
+- **EMAIL_PASS**: Password for the email account (use app-specific password for Gmail)
+- **MYEMAIL**: No-reply email address for system notifications
+- **Mysecret**: Secret token for email verification (can be any secure string)
+
+### Database Setup
+
+After setting up your environment variables, you'll need to set up your PostgreSQL database and run the Prisma migrations:
+
+```bash
+# Generate Prisma client
+$ npx prisma generate
+
+# Run database migrations
+$ npx prisma migrate dev
+
+# (Optional) Seed the database
+$ npx prisma db seed
 ```
 
 ## Compile and run the project
