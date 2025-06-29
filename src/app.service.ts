@@ -147,7 +147,7 @@ export class AppService {
           
           <main class="container">
               <div class="content">
-                  <h2><span class="emoji">🚀</span> Welcome to the Algerian Project Platform!</h2>
+                  <h2><span class="emoji"></span> Welcome to the Algerian Project Platform!</h2>
                   <p>A hub for entrepreneurs, incubators, and investors to collaborate and grow.</p>
                   
                   <div class="features">
@@ -181,7 +181,7 @@ export class AppService {
           
           <footer>
               <div class="container">
-                  <p>© 2023 Algerian Project Hub <span class="emoji">🇩🇿</span></p>
+                  <p>© 2023 Algerian Project Hub <span class="emoji"></span></p>
                   <p>Contact: support@projectalgeria.dz</p>
               </div>
           </footer>

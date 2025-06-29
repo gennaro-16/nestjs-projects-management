@@ -11,12 +11,13 @@ import { Prisma } from '@prisma/client';
 import { UpdateModuleDto } from './dto/update-static-module.dto';
 import { UpdateAllModulesDto } from './dto/update-all-modules.dto';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { IsVerifiedGuard } from 'src/guards/is-verified/is-verified.guard';
 
 @Controller('projects')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
-  @UseGuards(AuthGuard) // Only authenticated users can create a project
+  @UseGuards(AuthGuard, IsVerifiedGuard)
   @Post()
   async createProject(@Request() req, @Body() dto: CreateProjectDto) {
     return this.projectService.createProject(req.user.id, dto);
@@ -63,7 +64,7 @@ export class ProjectController {
   //add member to a project 
   // Example route handler for /add-user
   //✅ tested 
-  @UseGuards(AuthGuard, OwnershipGuard)
+  @UseGuards(AuthGuard, IsVerifiedGuard, OwnershipGuard)
   @Post('/add-member')
   addMember(@Body() body) {
     const { projectId, userIdentifier } = body;
@@ -115,13 +116,13 @@ export class ProjectController {
     return this.projectService.getProjectById(id);
   }
 
-  @UseGuards(AuthGuard, OwnershipGuard) // Only authenticated owners can update
+  @UseGuards(AuthGuard, IsVerifiedGuard, OwnershipGuard)
   @Patch(':id')
   async updateProject(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
     return this.projectService.updateProject(id, dto);
   }
 
-  @UseGuards(AuthGuard, OwnershipGuard) // Only project owners can delete
+  @UseGuards(AuthGuard, IsVerifiedGuard, OwnershipGuard)
   @Delete(':id')
   async deleteProject(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
@@ -235,41 +236,3 @@ export class ProjectController {
 }
 
 
-/*// 
-
-// ✅ Set funding goal
-@Patch(':projectId/funding-goal')
-async setFundingGoal(@Param('projectId') projectId: string, @Body('fundingGoal') fundingGoal: number) {
-  return this.projectService.setFundingGoal(projectId, fundingGoal);
-}
-
-// ✅ Update funding raised
-@Patch(':projectId/funding-raised')
-async updateFundingRaised(@Param('projectId') projectId: string, @Body('amount') amount: number) {
-  return this.projectService.updateFundingRaised(projectId, amount);
-}
-
-// ✅ Get top industries
-@Get('stats/top-industries')
-async getTopIndustries() {
-  return this.projectService.getTopIndustries();
-}
-
-// ✅ Get top projects by members
-@Get('stats/top-projects')
-async getTopProjectsByMembers() {
-  return this.projectService.getTopProjectsByMembers();
-}
-
-// ✅ Follow a project
-@Post(':projectId/follow/:userId')
-async followProject(@Param('userId') userId: string, @Param('projectId') projectId: string) {
-  return this.projectService.followProject(userId, projectId);
-}
-
-// ✅ Send partnership request
-@Post(':projectId/partnership/:userId')
-async sendPartnershipRequest(@Param('userId') userId: string, @Param('projectId') projectId: string) {
-  return this.projectService.sendPartnershipRequest(userId, projectId);
-}
-*/

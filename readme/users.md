@@ -1,6 +1,6 @@
 ### Users
 
-## 📌 POST /auth/signin – Log in and receive a JWT token
+## POST /auth/signin – Log in and receive a JWT token
 
 ### ✅ Request Body
 

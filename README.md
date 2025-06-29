@@ -1,4 +1,3 @@
-
 # NestJS API with Prisma & PostgreSQL
 
 ## Project Overview
@@ -152,7 +151,7 @@ This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It inclu
 ## Host : https://nestjs-projects-management.onrender.com
 ### Authentication
 
-## 📌 POST /auth/signup – Register a new user
+## POST /auth/signup – Register a new user
 
 Registers a new user. Optional fields should be placed at the bottom of the request body.
 
@@ -183,7 +182,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## 📌 POST /auth/signin – Log in and receive a JWT token
+## POST /auth/signin – Log in and receive a JWT token
 
 ### ✅ Request Body
 
@@ -236,7 +235,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## 📌 POST /auth/verify-email – Verify email using a token
+## POST /auth/verify-email – Verify email using a token
 
 ### ✅ Request Body
 
@@ -256,7 +255,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## 📌 POST /auth/forgot-password – Request password reset
+## POST /auth/forgot-password – Request password reset
 
 ### ✅ Request Body
 
@@ -268,7 +267,7 @@ Registers a new user. Optional fields should be placed at the bottom of the requ
 
 ---
 
-## 📌 POST /auth/reset-password – Reset password using a token
+## POST /auth/reset-password – Reset password using a token
 
 ### ✅ Request Body
 
