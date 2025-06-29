@@ -134,7 +134,7 @@ src
 
 ### Database Entity Relationship Diagram
 
-![Database ER Diagram](docs/er-diagram.png)
+<img src="docs/er-diagram.png" alt="Database ER Diagram" width="600" height="400" style="max-width: 100%; height: auto;">
 
 *Entity Relationship Diagram showing the database schema and relationships between entities.*
 
