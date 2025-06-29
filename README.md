@@ -23,129 +23,120 @@ This API is built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It inclu
 
 ## Project Structure
 
+### Source Code Structure
+
 ```bash
-.
-├── admin
-│   ├── admin.controller.spec.ts
-│   ├── admin.controller.ts
-│   ├── admin.module.ts
-│   ├── admin.service.spec.ts
-│   ├── admin.service.ts
-│   └── dto
-├── announcement
-│   ├── announcement.controller.spec.ts
-│   ├── announcement.controller.ts
-│   ├── announcement.module.ts
-│   ├── announcement.service.spec.ts
-│   ├── announcement.service.ts
-│   └── dto
-├── app.controller.spec.ts
-├── app.controller.ts
-├── app.module.ts
-├── app.service.ts
+src
 ├── approval-status
-│   ├── approval-status.controller.spec.ts
+│   ├── dto
+│   │   └── approve-member.dto.ts
 │   ├── approval-status.controller.ts
 │   ├── approval-status.module.ts
-│   ├── approval-status.service.spec.ts
-│   ├── approval-status.service.ts
-│   └── dto
+│   └── approval-status.service.ts
 ├── auth
-│   ├── auth.controller.spec.ts
+│   ├── dto
+│   │   ├── forgot-password.dto.ts
+│   │   ├── signin.dto.ts
+│   │   ├── signup.dto.ts
+│   │   └── verify-email.dto.ts
 │   ├── auth.controller.ts
 │   ├── auth.module.ts
-│   ├── auth.service.spec.ts
 │   ├── auth.service.ts
-│   ├── dto
 │   └── jwt.strategy.ts
-├── config
 ├── decorators
 │   ├── roles
+│   │   └── roles.decorator.ts
 │   └── user.decorator.ts
 ├── filters
 │   ├── auth
+│   │   └── auth.filter.ts
 │   └── http-exception
+│       └── http-exception.filter.ts
 ├── guards
 │   ├── auth
+│   │   └── auth.guard.ts
 │   ├── is-verified
+│   │   └── is-verified.guard.ts
 │   ├── ownership
+│   │   └── ownership.guard.ts
 │   └── roles
+│       └── roles.guard.ts
 ├── jwt
 │   ├── jwt.module.ts
-│   ├── jwt.service.spec.ts
 │   └── jwt.service.ts
 ├── mail
-│   ├── dto
-│   ├── mail.controller.spec.ts
 │   ├── mail.controller.ts
 │   ├── mail.module.ts
-│   ├── mail.service.spec.ts
 │   └── mail.service.ts
-├── main.ts
-├── middleware
-│   ├── auth
-│   └── logger
-├── notification
+├── module
 │   ├── dto
-│   ├── notification.controller.spec.ts
+│   │   ├── create-module.dto.ts
+│   │   └── update-module.dto.ts
+│   ├── module.controller.ts
+│   ├── module.module.ts
+│   └── module.service.ts
+├── notification
 │   ├── notification.controller.ts
 │   ├── notification.module.ts
-│   ├── notification.service.spec.ts
 │   └── notification.service.ts
 ├── pipes
 │   ├── auth
+│   │   └── auth.pipe.ts
 │   └── parse-int
+│       └── parse-int.pipe.ts
 ├── prisma
 │   ├── prisma.module.ts
-│   ├── prisma.service.spec.ts
 │   └── prisma.service.ts
 ├── project
 │   ├── dto
-│   ├── project.controller.spec.ts
+│   │   ├── create-project.dto.ts
+│   │   ├── create-session.dto.ts
+│   │   ├── get-project-team.dto.ts
+│   │   ├── update-all-modules.dto.ts
+│   │   ├── update-project.dto.ts
+│   │   └── update-static-module.dto.ts
 │   ├── project.controller.ts
-│   ├── project.service.spec.ts
 │   └── project.service.ts
-├── soutenance
-│   ├── dto
-│   ├── soutenance.controller.spec.ts
-│   ├── soutenance.controller.ts
-│   ├── soutenance.module.ts
-│   ├── soutenance.service.spec.ts
-│   └── soutenance.service.ts
 ├── types
 │   ├── ApprovalStatus.ts
 │   ├── AuditLog.ts
 │   ├── Comment.ts
+│   ├── custom-prisma.types.ts
 │   ├── Feedback.ts
 │   ├── File.ts
+│   ├── jwt-payload.type.ts
 │   ├── Milestone.type.ts
 │   ├── Notification.ts
-│   ├── Soutenance.ts
-│   ├── Task.ts
-│   ├── custom-prisma.types.ts
-│   ├── jwt-payload.type.ts
 │   ├── project.types.ts
 │   ├── request-with-user.type.ts
 │   ├── roles.enum.ts
+│   ├── Soutenance.ts
+│   ├── Task.ts
 │   └── user.type.ts
 ├── user
 │   ├── dto
-│   ├── user.controller.spec.ts
+│   │   └── update-user-password.dto.ts
 │   ├── user.controller.ts
 │   ├── user.module.ts
-│   ├── user.service.spec.ts
 │   └── user.service.ts
-├── utils
-│   └── verfication.ts
-└── workshop
-    ├── workshop.controller.spec.ts
-    ├── workshop.controller.ts
-    ├── workshop.module.ts
-    ├── workshop.service.spec.ts
-    └── workshop.service.ts
-
+├── workshop
+│   ├── dto
+│   │   ├── CreateWorkshopDto.ts
+│   │   └── UpdateWorkshopDto.ts
+│   ├── workshop.controller.ts
+│   ├── workshop.module.ts
+│   └── workshop.service.ts
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+└── main.ts
 ```
 
+### Database Entity Relationship Diagram
+
+![Database ER Diagram](docs/er-diagram.png)
+
+*Entity Relationship Diagram showing the database schema and relationships between entities.*
 
 ## API Endpoints
 ## Host : https://nestjs-projects-management.onrender.com
